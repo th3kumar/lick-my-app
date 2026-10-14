@@ -84,25 +84,39 @@ export function upload(path: string, blob: Blob, type: string, onProgress?: (fra
   return { promise, abort: () => xhr.abort() };
 }
 
+/** An already-uploaded image (Supabase sends CORS headers), drawable to a canvas for re-framing. */
+export async function loadRemoteImage(url: string): Promise<HTMLImageElement> {
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  // its own cache entry: a plain <img> of the same URL may already be cached without CORS headers,
+  // and the browser would reuse that copy and refuse to let a canvas read it
+  img.src = `${url}${url.includes("?") ? "&" : "?"}cors=1`;
+  await img.decode();
+  return img;
+}
+
 /** Loads any picked photo (HEIC included) into an element we can draw. */
 export async function loadImage(file: Blob | File): Promise<HTMLImageElement> {
   const blob = file instanceof File && isHeic(file) ? (await normalize(file)).blob : file;
   const url = URL.createObjectURL(blob);
   const img = new Image();
   img.decoding = "async";
+  img.crossOrigin = "anonymous";
   img.src = url;
   await img.decode();
   return img;
 }
 
-/** Square crop → 400×400 JPG. (sx, sy, size) are in source pixels. */
-export async function cropToJpeg(img: CanvasImageSource, sx: number, sy: number, size: number): Promise<Blob> {
+/** Crop → JPG of outW × outH. (sx, sy, sw, sh) are in source pixels. Thumbnails: 400×400; banners: 1065×435. */
+export async function cropToJpeg(img: CanvasImageSource, sx: number, sy: number, sw: number, sh: number, outW = 400, outH = 400): Promise<Blob> {
   const canvas = document.createElement("canvas");
-  canvas.width = 400;
-  canvas.height = 400;
+  canvas.width = outW;
+  canvas.height = outH;
   const ctx = canvas.getContext("2d")!;
   ctx.imageSmoothingQuality = "high";
-  ctx.drawImage(img, sx, sy, size, size, 0, 0, 400, 400);
+  ctx.fillStyle = "#FFFFFF";
+  ctx.fillRect(0, 0, outW, outH);
+  ctx.drawImage(img, sx, sy, sw, sh, 0, 0, outW, outH);
   return new Promise((resolve, reject) =>
     canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("upload"))), "image/jpeg", 0.88),
   );

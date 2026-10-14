@@ -51,6 +51,7 @@ export interface EventInput {
   banner_url: string | null;
   venue: string;
   starts_at: string | null;
+  close_hours_before: number;
   submissions_open: boolean;
   settings: EventSettings;
   rules_text: string;

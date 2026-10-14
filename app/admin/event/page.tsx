@@ -11,7 +11,8 @@ import * as api from "@/lib/lick-my-app/api";
 import { TIER_COLOR_OPTIONS, DEFAULT_TIERS } from "@/lib/lick-my-app/colors";
 import { dayTime } from "@/lib/lick-my-app/format";
 import { useEventChanges } from "@/lib/lick-my-app/hooks";
-import { mediaPath, normalize, upload } from "@/lib/lick-my-app/upload";
+import { loadImage, loadRemoteImage, mediaPath, upload } from "@/lib/lick-my-app/upload";
+import { CropStage, type CropHandle, type CropShape } from "@/components/lma/crop-stage";
 import { DEFAULT_SETTINGS, type AdminEvent, type AwardKey, type EventSettings, type Tier } from "@/lib/lick-my-app/types";
 import { routes } from "@/lib/lick-my-app/routes";
 
@@ -30,7 +31,7 @@ const NEXT_LABELS = ["S", "A", "B", "C", "D", "E", "F"];
 
 function blank(): Form {
   return {
-    name: "", topic: "", description: "", banner_url: null, venue: "", starts_at: null,
+    name: "", topic: "", description: "", banner_url: null, venue: "", starts_at: null, close_hours_before: 2,
     submissions_open: true, settings: { ...DEFAULT_SETTINGS }, rules_text: "",
     tiers: DEFAULT_TIERS.map((t) => ({ ...t })),
   };
@@ -39,19 +40,12 @@ function blank(): Form {
 function fromEvent(e: AdminEvent): Form {
   return {
     name: e.name, topic: e.topic, description: e.description ?? "", banner_url: e.banner_url, venue: e.venue ?? "",
-    starts_at: e.starts_at, submissions_open: e.submissions_open,
+    starts_at: e.starts_at, close_hours_before: e.close_hours_before ?? 2, submissions_open: e.submissions_open,
     settings: { ...DEFAULT_SETTINGS, ...e.settings }, rules_text: e.rules_text ?? "",
     tiers: e.tiers.map((t) => ({ ...t })),
   };
 }
 
-/** ISO → value for <input type="datetime-local"> in local time. */
-const toLocalInput = (iso: string | null) => {
-  if (!iso) return "";
-  const d = new Date(iso);
-  const p = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
-};
 
 export default function EventDetailsPage() {
   const id = useSearchParams().get("id") ?? "";
@@ -63,6 +57,7 @@ export default function EventDetailsPage() {
   const [form, setForm] = useState<Form | null>(() => (isNew ? blank() : event ? fromEvent(event) : null));
   const [problem, setProblem] = useState<{ title: string; body: string } | null>(null);
   const [rulesSheet, setRulesSheet] = useState(false);
+  const [startsSheet, setStartsSheet] = useState(false);
   const dirty = useRef(false);
   const [changed, setChanged] = useState(false); // mirrors dirty for render: ✓ only lights up with something to apply
 
@@ -159,21 +154,17 @@ export default function EventDetailsPage() {
                 <div className="sd-group sd-hard">
                   <div className="sd-row">
                     <span className="sd-row__label">Starts</span>
-                    <label style={{ position: "relative", cursor: "pointer", display: "flex" }}>
-                      <span className="sd-date-pill">{form.starts_at ? dayTime(form.starts_at) : "Pick a time"}</span>
-                      <input
-                        type="datetime-local"
-                        aria-label="Starts"
-                        value={toLocalInput(form.starts_at)}
-                        onChange={(e) => set("starts_at", e.target.value ? new Date(e.target.value).toISOString() : null)}
-                        style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer", width: "100%" }}
-                      />
-                    </label>
+                    <button type="button" className="sd-date-pill lma-pill-btn" onClick={() => setStartsSheet(true)}>
+                      {form.starts_at ? dayTime(form.starts_at) : "Pick a time"}
+                    </button>
                   </div>
-                  <div className="sd-row"><span className="sd-row__label">Submissions close</span><span className="sd-date-pill">2h before start</span></div>
+                  <div className="sd-row">
+                    <span className="sd-row__label">Submissions close</span>
+                    <PillMenu label="Submissions close" value={form.close_hours_before} options={CLOSE_OPTIONS} onChange={(v) => set("close_hours_before", v)} />
+                  </div>
                   <div className="sd-row"><span className="sd-row__label">Submissions open</span><Toggle label="Submissions open" checked={form.submissions_open} onChange={(v) => set("submissions_open", v)} /></div>
                 </div>
-                <div className="sd-footer">closing two hours early gives you time to hide, fix or reassign anything before people arrive.</div>
+                <div className="sd-footer">{closeFooter(form.starts_at, form.close_hours_before)}</div>
               </section>
 
               <section className="sd-anim-settle" style={{ ["--i" as string]: 2 }}>
@@ -284,6 +275,17 @@ export default function EventDetailsPage() {
         </main>
       </Push>
 
+      {startsSheet && (
+        <StartsSheet
+          value={form.starts_at}
+          closeHours={form.close_hours_before}
+          onClose={() => setStartsSheet(false)}
+          onCommit={(iso) => {
+            set("starts_at", iso);
+            setStartsSheet(false);
+          }}
+        />
+      )}
       {rulesSheet && (
         <RulesTextSheet
           value={form.rules_text}
@@ -462,21 +464,151 @@ function TierList({ tiers, locked, onChange }: { tiers: Tier[]; locked: boolean;
   );
 }
 
+/* ---------- Timing ---------- */
+
+const CLOSE_OPTIONS = [
+  { value: 0, label: "At start" },
+  { value: 1, label: "1h before start" },
+  { value: 2, label: "2h before start" },
+  { value: 3, label: "3h before start" },
+  { value: 6, label: "6h before start" },
+  { value: 12, label: "12h before start" },
+  { value: 24, label: "1 day before start" },
+  { value: 48, label: "2 days before start" },
+];
+const CLOSE_WORDS: Record<number, string> = { 1: "an hour", 2: "two hours", 3: "three hours", 6: "six hours", 12: "twelve hours", 24: "a day", 48: "two days" };
+
+function closeFooter(startsAt: string | null, hours: number): string {
+  const when = startsAt ? dayTime(new Date(Date.parse(startsAt) - hours * 3600e3).toISOString()).toLowerCase() : null;
+  if (hours === 0) return when ? `submissions stay open right up to the start, ${when}.` : "submissions stay open right up to the start.";
+  const why = `closing ${CLOSE_WORDS[hours] ?? `${hours} hours`} early gives you time to hide, fix or reassign anything before people arrive.`;
+  return when ? `closes ${when}. ${why}` : why;
+}
+
+/** A date pill that opens a menu in place (value + ⌃⌄). */
+function PillMenu({ label, value, options, onChange }: { label: string; value: number; options: { value: number; label: string }[]; onChange: (v: number) => void }) {
+  const current = options.find((o) => o.value === value)?.label ?? `${value}h before start`;
+  return (
+    <span className="lma-menu">
+      <span className="sd-date-pill lma-pill-btn" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+        {current}
+        <span aria-hidden="true" style={{ fontSize: 11, color: "#6B6B70" }}>⌃⌄</span>
+      </span>
+      <select aria-label={label} value={value} onChange={(e) => onChange(Number(e.target.value))}>
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
+      </select>
+    </span>
+  );
+}
+
+const pad = (n: number) => String(n).padStart(2, "0");
+const dateValue = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const timeValue = (d: Date) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+/** Next given weekday (0 = Sun … 6 = Sat) at hh:mm, today counts if still ahead. */
+function nextAt(weekday: number | null, hh: number, mm = 0): Date {
+  const d = new Date();
+  d.setSeconds(0, 0);
+  d.setHours(hh, mm);
+  if (weekday === null) return d;
+  let add = (weekday - d.getDay() + 7) % 7;
+  if (add === 0 && d.getTime() <= Date.now()) add = 7;
+  d.setDate(d.getDate() + add);
+  return d;
+}
+
+function StartsSheet({ value, closeHours, onClose, onCommit }: { value: string | null; closeHours: number; onClose: () => void; onCommit: (iso: string) => void }) {
+  const initial = value ? new Date(value) : nextAt(5, 20);
+  const [date, setDate] = useState(dateValue(initial));
+  const [time, setTime] = useState(timeValue(initial));
+  const { exit, run } = useSheetExit(onClose);
+  const picked = date && time ? new Date(`${date}T${time}`) : null;
+  const ok = !!picked && !Number.isNaN(picked.getTime());
+  const quick = [
+    ...(Date.now() < nextAt(null, 20).getTime() ? [{ label: "Tonight, 8 PM", d: nextAt(null, 20) }] : []),
+    { label: "Fri, 8 PM", d: nextAt(5, 20) },
+    { label: "Sat, 8 PM", d: nextAt(6, 20) },
+    { label: "Sat, 7 PM", d: nextAt(6, 19) },
+  ];
+  const openPicker = (e: React.MouseEvent<HTMLInputElement>) => {
+    try {
+      (e.currentTarget as HTMLInputElement & { showPicker?: () => void }).showPicker?.();
+    } catch {
+      /* the field itself still works */
+    }
+  };
+  return (
+    <SheetFrame variant="card" exit={exit} onScrim={() => run("cancel")} label="Starts">
+      <SheetCard>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 18 }}>
+          <button className="sd-icon-btn sd-hard sd-press sd-icon-btn--cancel" type="button" aria-label="Cancel" onClick={() => run("cancel")}>✕</button>
+          <CommitButton label="Use this time" enabled={ok} onCommit={() => { if (ok) onCommit(picked!.toISOString()); }} />
+        </div>
+        <div className="sd-title-modal" style={{ marginBottom: 20 }}>Starts</div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 18 }}>
+          {quick.map((q) => {
+            const on = ok && picked!.getTime() === q.d.getTime();
+            return (
+              <button
+                key={q.label}
+                type="button"
+                className={on ? "lma-chip-dark" : "sd-chip"}
+                onClick={() => {
+                  setDate(dateValue(q.d));
+                  setTime(timeValue(q.d));
+                }}
+              >
+                {q.label}
+              </button>
+            );
+          })}
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 12 }}>
+          <label style={{ display: "block" }}>
+            <span className="sd-group-header" style={{ display: "block" }}>Date</span>
+            <input className="sd-field sd-hard" type="date" value={date} onClick={openPicker} onChange={(e) => setDate(e.target.value)} />
+          </label>
+          <label style={{ display: "block" }}>
+            <span className="sd-group-header" style={{ display: "block" }}>Time</span>
+            <input className="sd-field sd-hard" type="time" step={300} value={time} onClick={openPicker} onChange={(e) => setTime(e.target.value)} />
+          </label>
+        </div>
+        <div className="sd-footer">
+          {ok
+            ? `${picked!.toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long" }).toLowerCase()} at ${picked!.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toLowerCase()}. submissions close ${closeHours ? dayTime(new Date(picked!.getTime() - closeHours * 3600e3).toISOString()).toLowerCase() : "when it starts"}.`
+            : "pick a date and a time."}
+        </div>
+      </SheetCard>
+    </SheetFrame>
+  );
+}
+
+/* ---------- Banner: framed to the phone banner (355 × 145) ---------- */
+
+const BANNER_SHAPE: CropShape = { frameW: 340, frameH: Math.round((340 * 145) / 355), stageH: 210, outW: 1065, outH: 435 };
+
 function BannerDrop({ url, scope, onChange }: { url: string | null; scope: string; onChange: (u: string | null) => void }) {
   const input = useRef<HTMLInputElement>(null);
-  const [progress, setProgress] = useState<number | null>(null);
   const [over, setOver] = useState(false);
+  const [editing, setEditing] = useState<HTMLImageElement | null>(null);
+  const [problem, setProblem] = useState<string | null>(null);
   const take = async (file: File | undefined) => {
-    if (!file || !file.type.startsWith("image/") && !/\.hei[cf]$/i.test(file.name)) return;
+    if (!file || (!file.type.startsWith("image/") && !/\.hei[cf]$/i.test(file.name))) return;
+    setProblem(null);
     try {
-      const n = await normalize(file);
-      setProgress(0);
-      const u = await upload(mediaPath(`${scope}/banner`, n.ext), n.blob, n.type, setProgress).promise;
-      onChange(u);
+      setEditing(await loadImage(file));
     } catch {
-      /* stays as it was */
-    } finally {
-      setProgress(null);
+      setProblem("couldn’t open that image. try a jpg or png.");
+    }
+  };
+  const adjust = async () => {
+    if (!url) return;
+    try {
+      setEditing(await loadRemoteImage(url));
+    } catch {
+      setProblem("couldn’t load the current banner. pick the image again.");
     }
   };
   return (
@@ -485,6 +617,7 @@ function BannerDrop({ url, scope, onChange }: { url: string | null; scope: strin
       <div
         role="button"
         tabIndex={0}
+        aria-label={url ? "Replace banner" : "Add banner"}
         onClick={() => input.current?.click()}
         onKeyDown={(e) => e.key === "Enter" && input.current?.click()}
         onDragOver={(e) => {
@@ -499,35 +632,69 @@ function BannerDrop({ url, scope, onChange }: { url: string | null; scope: strin
         }}
         className={url ? undefined : "lma-hatch-08"}
         style={{
-          height: 120, borderRadius: 12, border: `1.5px solid ${over ? "#C2A24C" : "#1A1A1C"}`, overflow: "hidden", position: "relative",
+          aspectRatio: "355 / 145", borderRadius: 12, border: `1.5px solid ${over ? "#C2A24C" : "#1A1A1C"}`, overflow: "hidden", position: "relative",
           display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: "#6B6B70", cursor: "pointer",
+          background: over && !url ? "color-mix(in srgb, #C2A24C 12%, transparent)" : undefined, transition: "border-color 180ms var(--sd-ease-snap), background 180ms var(--sd-ease-snap)",
         }}
       >
         {url ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={url} alt="Event banner" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        ) : progress !== null ? (
-          `${Math.round(progress * 100)}%`
+          <img src={url} alt="Event banner" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
         ) : (
           "banner image — drop here"
         )}
-        {url && (
-          <button
-            type="button"
-            className="sd-banner__close"
-            aria-label="Remove banner"
-            style={{ background: "#FFFFFF", border: "1.5px solid #1A1A1C" }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onChange(null);
-            }}
-          >
-            ✕
-          </button>
-        )}
       </div>
+      {url && (
+        <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+          <button type="button" className="sd-chip sd-hard sd-hard--chip sd-press" onClick={adjust}>Adjust</button>
+          <button type="button" className="sd-chip sd-hard sd-hard--chip sd-press" onClick={() => input.current?.click()}>Replace</button>
+          <button type="button" className="sd-chip sd-hard sd-hard--chip sd-press" style={{ color: "#FF3B30" }} onClick={() => onChange(null)}>Remove</button>
+        </div>
+      )}
+      <div className="sd-footer">{problem ?? "same shape as the banner on phones. you’ll frame it before it’s saved."}</div>
       <input ref={input} type="file" accept="image/*,.heic,.heif" hidden onChange={(e) => { take(e.target.files?.[0]); e.target.value = ""; }} />
+      {editing && (
+        <BannerSheet
+          image={editing}
+          scope={scope}
+          onClose={() => setEditing(null)}
+          onDone={(u) => {
+            onChange(u);
+            setEditing(null);
+          }}
+        />
+      )}
     </div>
+  );
+}
+
+function BannerSheet({ image, scope, onClose, onDone }: { image: HTMLImageElement; scope: string; onClose: () => void; onDone: (url: string) => void }) {
+  const crop = useRef<CropHandle>(null);
+  const [problem, setProblem] = useState<string | null>(null);
+  const { exit, run } = useSheetExit(onClose);
+  const commit = async () => {
+    setProblem(null);
+    try {
+      const blob = await crop.current!.crop();
+      if (!blob) return;
+      const url = await upload(mediaPath(`${scope}/banner`, "jpg"), blob, "image/jpeg").promise;
+      onDone(url);
+    } catch {
+      setProblem("didn’t upload. check the connection and try again.");
+    }
+  };
+  return (
+    <SheetFrame variant="card" exit={exit} onScrim={() => run("cancel")} label="Banner">
+      <SheetCard>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 18 }}>
+          <button className="sd-icon-btn sd-hard sd-press sd-icon-btn--cancel" type="button" aria-label="Cancel" onClick={() => run("cancel")}>✕</button>
+          <CommitButton label="Use this banner" enabled onCommit={commit} />
+        </div>
+        <div className="sd-title-modal" style={{ marginBottom: 20 }}>Banner</div>
+        <CropStage ref={crop} image={image} existing={null} accent="#C2A24C" shape={BANNER_SHAPE} slider />
+        <div className="sd-footer">{problem ?? "drag to move, scroll or slide to zoom. the frame is exactly what phones show at the top of the event page."}</div>
+      </SheetCard>
+    </SheetFrame>
   );
 }
 

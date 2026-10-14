@@ -1,28 +1,44 @@
 "use client";
-// P5 photo stage: 270px stage, 210px square frame with 4 corner handles, scrim outside.
-// Drag to frame the square; wheel / pinch zooms. Output is cropped to 400×400 JPG on ✓.
+// Crop stage. P5 photo: 270px stage, 210px square frame (→ 400×400 JPG). Banner: the phone
+// banner's 355:145 frame (→ 1065×435 JPG). Corner handles, scrim outside. Drag to move,
+// wheel / pinch / slider to zoom.
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { cropToJpeg } from "@/lib/lick-my-app/upload";
 
-const FRAME = 210;
-const STAGE_H = 270;
+export interface CropShape {
+  frameW: number; // CSS px inside the stage
+  frameH: number;
+  stageH: number;
+  outW: number; // output JPG
+  outH: number;
+}
+export const THUMB_SHAPE: CropShape = { frameW: 210, frameH: 210, stageH: 270, outW: 400, outH: 400 };
 
 export interface CropHandle {
   /** 400×400 JPG of the framed square, or null when no new photo was picked. */
   crop: () => Promise<Blob | null>;
 }
 
-export const CropStage = forwardRef<CropHandle, { image: HTMLImageElement | null; existing: string | null; accent: string }>(
-  function CropStage({ image, existing, accent }, ref) {
+export const CropStage = forwardRef<CropHandle, {
+  image: HTMLImageElement | null;
+  existing: string | null;
+  accent: string;
+  shape?: CropShape;
+  /** zoom slider under the stage (mouse users without a wheel / trackpad) */
+  slider?: boolean;
+}>(
+  function CropStage({ image, existing, accent, shape = THUMB_SHAPE, slider }, ref) {
+    const FRAME_W = shape.frameW;
+    const FRAME_H = shape.frameH;
     const stage = useRef<HTMLDivElement>(null);
-    const [box, setBox] = useState({ w: 355, h: STAGE_H - 3 });
+    const [box, setBox] = useState({ w: 355, h: shape.stageH - 3 });
     const [t, setT] = useState({ x: 0, y: 0, s: 1 });
     const pointers = useRef(new Map<number, { x: number; y: number }>());
     const pinch = useRef<{ d: number; s: number } | null>(null);
 
-    const frame = { left: (box.w - FRAME) / 2, top: (box.h - FRAME) / 2 };
-    const minScale = image ? Math.max(FRAME / image.naturalWidth, FRAME / image.naturalHeight) : 1;
+    const frame = { left: (box.w - FRAME_W) / 2, top: (box.h - FRAME_H) / 2 };
+    const minScale = image ? Math.max(FRAME_W / image.naturalWidth, FRAME_H / image.naturalHeight) : 1;
 
     const clamp = useCallback(
       (x: number, y: number, s: number) => {
@@ -30,12 +46,12 @@ export const CropStage = forwardRef<CropHandle, { image: HTMLImageElement | null
         const sc = Math.min(Math.max(s, minScale), minScale * 5);
         const w = image.naturalWidth * sc;
         const h = image.naturalHeight * sc;
-        const left = (box.w - FRAME) / 2;
-        const top = (box.h - FRAME) / 2;
+        const left = (box.w - FRAME_W) / 2;
+        const top = (box.h - FRAME_H) / 2;
         return {
           s: sc,
-          x: Math.min(left, Math.max(left + FRAME - w, x)),
-          y: Math.min(top, Math.max(top + FRAME - h, y)),
+          x: Math.min(left, Math.max(left + FRAME_W - w, x)),
+          y: Math.min(top, Math.max(top + FRAME_H - h, y)),
         };
       },
       [image, minScale, box.w, box.h],
@@ -54,7 +70,7 @@ export const CropStage = forwardRef<CropHandle, { image: HTMLImageElement | null
     // new photo: cover the frame, centred on it
     useEffect(() => {
       if (!image) return;
-      const s = Math.max(FRAME / image.naturalWidth, FRAME / image.naturalHeight);
+      const s = Math.max(FRAME_W / image.naturalWidth, FRAME_H / image.naturalHeight);
       setT({
         s,
         x: (box.w - image.naturalWidth * s) / 2,
@@ -84,8 +100,7 @@ export const CropStage = forwardRef<CropHandle, { image: HTMLImageElement | null
     useImperativeHandle(ref, () => ({
       crop: async () => {
         if (!image) return null;
-        const size = FRAME / t.s;
-        return cropToJpeg(image, (frame.left - t.x) / t.s, (frame.top - t.y) / t.s, size);
+        return cropToJpeg(image, (frame.left - t.x) / t.s, (frame.top - t.y) / t.s, FRAME_W / t.s, FRAME_H / t.s, shape.outW, shape.outH);
       },
     }));
 
@@ -127,11 +142,11 @@ export const CropStage = forwardRef<CropHandle, { image: HTMLImageElement | null
       </>
     );
 
-    return (
+    const stageEl = (
       <div
         ref={stage}
         className="lma-crop lma-hatch-10"
-        style={{ cursor: image ? "grab" : "default" }}
+        style={{ cursor: image ? "grab" : "default", height: shape.stageH }}
         onPointerDown={onDown}
         onPointerMove={onMove}
         onPointerUp={onUp}
@@ -147,12 +162,36 @@ export const CropStage = forwardRef<CropHandle, { image: HTMLImageElement | null
             style={{ width: image.naturalWidth, height: image.naturalHeight, transform: `translate(${t.x}px, ${t.y}px) scale(${t.s})` }}
           />
         )}
-        <div className="lma-crop__frame" style={{ background: image ? "transparent" : `color-mix(in srgb, ${accent} 22%, transparent)` }}>
+        <div className="lma-crop__frame" style={{ width: FRAME_W, height: FRAME_H, background: image ? "transparent" : `color-mix(in srgb, ${accent} 22%, transparent)` }}>
           {!image && existing && (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={existing} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderRadius: 2 }} />
           )}
           {handles}
+        </div>
+      </div>
+    );
+    if (!slider) return stageEl;
+    return (
+      <div>
+        {stageEl}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 14, padding: "0 4px" }}>
+          <span aria-hidden="true" style={{ fontSize: 13, fontWeight: 800, color: "#6B6B70" }}>−</span>
+          <input
+            type="range"
+            aria-label="Zoom"
+            min={0}
+            max={100}
+            disabled={!image}
+            value={image ? Math.round((Math.log(t.s / minScale) / Math.log(5)) * 100) : 0}
+            onChange={(e) => {
+              const target = minScale * Math.pow(5, Number(e.target.value) / 100);
+              zoomAround(target / t.s);
+            }}
+            className="lma-zoom"
+            style={{ flex: 1, ["--accent" as string]: accent } as React.CSSProperties}
+          />
+          <span aria-hidden="true" style={{ fontSize: 13, fontWeight: 800, color: "#6B6B70" }}>+</span>
         </div>
       </div>
     );
