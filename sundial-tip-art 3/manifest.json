@@ -1,0 +1,68 @@
+{
+  "name": "sundial-tip-art",
+  "version": "1.0.0",
+  "note": "Three options (a, b, c) per slot. Keep the one chosen per slot and delete the others. All art is original and transparent; the teal #7FD8DE card behind it is existing UI.",
+  "format": {
+    "primary": "Animated SVG: self-contained, CSS keyframes inside, no JS, no external assets, transparent background",
+    "fallback": "PNG @3x, transparent, static pose (same as prefers-reduced-motion)",
+    "reducedMotion": "Built into each SVG via @media (prefers-reduced-motion: reduce)",
+    "font": "Letters/numbers in SVG text use 'Archivo Black', falling back to 'Arial Black'. When loaded with <img>, web fonts are not available inside the SVG, so the fallback shows."
+  },
+  "palette": {
+    "ink": "#2C3C3F",
+    "mutedAccents": ["#DFCFA2", "#BAD9A0", "#A2C4DF", "#E2A9BF", "#BFA9E2", "#DFB5A2"],
+    "derivedFrom": ["#C2A24C", "#7AB648", "#4C8DC2", "#C24C7A", "#7A4CC2", "#C2704C"],
+    "shadow": "hard offset 1.6 units down-right, #1A1A1C at 20% opacity"
+  },
+  "slots": [
+    {
+      "id": "submitters",
+      "screen": "Role screen — 'How are you playing, {name}?'",
+      "placement": "Bottom teal tip card, the 'character art — drop here' area directly above the white sign '5 SUBMITTERS SO FAR'",
+      "size": { "width": 327, "height": 88, "unit": "css px" },
+      "container": { "borderRadius": 10, "overflow": "hidden", "background": "transparent (card is teal #7FD8DE)" },
+      "options": {
+        "a": { "name": "Wander", "svg": "svg/submitters/a-wander.svg", "png": "png/submitters/a-wander@3x.png" },
+        "b": { "name": "Conga line", "svg": "svg/submitters/b-conga-line.svg", "png": "png/submitters/b-conga-line@3x.png" },
+        "c": { "name": "Next up", "svg": "svg/submitters/c-next-up.svg", "png": "png/submitters/c-next-up@3x.png" }
+      }
+    },
+    {
+      "id": "voter-wait",
+      "screen": "Voter waiting screen — 'You're in' with the countdown 'Until voting opens'",
+      "placement": "Teal tip card below the countdown, the art area directly above the white sign 'KEEP THIS PAGE OPEN ON FRIDAY'",
+      "size": { "width": 327, "height": 88, "unit": "css px" },
+      "container": { "borderRadius": 10, "overflow": "hidden", "background": "transparent (card is teal #7FD8DE)" },
+      "options": {
+        "a": { "name": "Stroll", "svg": "svg/voter-wait/a-stroll.svg", "png": "png/voter-wait/a-stroll@3x.png" },
+        "b": { "name": "Float back", "svg": "svg/voter-wait/b-float-back.svg", "png": "png/voter-wait/b-float-back@3x.png" },
+        "c": { "name": "Snack break", "svg": "svg/voter-wait/c-snack-break.svg", "png": "png/voter-wait/c-snack-break@3x.png" }
+      }
+    },
+    {
+      "id": "eyes-on-tv",
+      "screen": "Phone countdown screen — 'Here we go' with the circular 'STARTING' countdown",
+      "placement": "Bottom teal tip card, the art area directly above the white sign 'EYES ON THE TV'",
+      "size": { "width": 327, "height": 88, "unit": "css px" },
+      "container": { "borderRadius": 10, "overflow": "hidden", "background": "transparent (card is teal #7FD8DE)" },
+      "options": {
+        "a": { "name": "Over there!", "svg": "svg/eyes-on-tv/a-over-there.svg", "png": "png/eyes-on-tv/a-over-there@3x.png" },
+        "b": { "name": "Carry the count", "svg": "svg/eyes-on-tv/b-carry-the-count.svg", "png": "png/eyes-on-tv/b-carry-the-count@3x.png" },
+        "c": { "name": "Phone to TV", "svg": "svg/eyes-on-tv/c-phone-to-tv.svg", "png": "png/eyes-on-tv/c-phone-to-tv@3x.png" }
+      }
+    },
+    {
+      "id": "hype-banner",
+      "screen": "Hype screen",
+      "placement": "Top banner. This is the DEFAULT only: if the admin uploaded a banner in Event details, show that image instead.",
+      "size": { "width": 355, "height": 145, "unit": "css px" },
+      "container": { "borderRadius": 10, "overflow": "hidden", "background": "transparent (card is teal #7FD8DE)" },
+      "optional": true,
+      "options": {
+        "a": { "name": "Podium party", "svg": "svg/hype-banner/a-podium-party.svg", "png": "png/hype-banner/a-podium-party@3x.png" },
+        "b": { "name": "Climb to S", "svg": "svg/hype-banner/b-climb-to-s.svg", "png": "png/hype-banner/b-climb-to-s@3x.png" },
+        "c": { "name": "Tier tower", "svg": "svg/hype-banner/c-tier-tower.svg", "png": "png/hype-banner/c-tier-tower@3x.png" }
+      }
+    }
+  ]
+}

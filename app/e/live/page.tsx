@@ -57,7 +57,7 @@ export default function LivePage() {
   const screen = e.phase === "countdown" ? "countdown" : voting && mine ? "owner" : voting && eligible ? "vote" : "idle";
 
   return (
-    <div style={{ position: "relative", overflow: "hidden", minHeight: "100dvh" }}>
+    <div className="lma-no-vt" style={{ position: "relative", overflow: "hidden", minHeight: "100dvh" }}>
       <AnimatePresence initial={false} mode="popLayout">
         <motion.div key={screen === "vote" || screen === "owner" ? `${screen}-${cur?.id}` : screen} variants={push} initial="enter" animate="center" exit="exit" style={{ background: "#FFFFFF" }}>
           {screen === "countdown" && <CountdownScreen live={live} now={now} />}
@@ -110,7 +110,7 @@ function CountdownScreen({ live, now }: { live: LiveState; now: () => number }) 
         </div>
         <div style={{ fontSize: 16, fontWeight: 800 }}>Until the show starts</div>
       </div>
-      <TipCard sign="Eyes on the TV" />
+      <TipCard slot="eyes-on-tv" sign="Eyes on the TV" />
     </div>
   );
 }
@@ -136,7 +136,7 @@ function IdleScreen({ live }: { live: LiveState }) {
       <div style={{ flex: 1, display: "flex", alignItems: "center", padding: "24px 0" }}>
         {e.phase !== "reveal" && <Stat parts={[{ num: live.progress.done, unit: `/${live.progress.total}` }]} label={done ? "Characters ranked" : "Ranked so far"} />}
       </div>
-      <TipCard sign="Eyes on the TV" />
+      <TipCard slot="eyes-on-tv" sign="Eyes on the TV" />
     </div>
   );
 }

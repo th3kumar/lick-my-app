@@ -36,7 +36,7 @@ export default function WaitingPage() {
 
       <Stat style={{ marginTop: 20 }} parts={countdownParts(event.starts_at, now)} label="Until voting opens" />
 
-      <TipCard style={{ marginTop: 24 }} sign={`Keep this page open on ${day ?? "the night"}`} />
+      <TipCard slot="voter-wait" style={{ marginTop: 24 }} sign={`Keep this page open on ${day ?? "the night"}`} />
 
       <div className="sd-group sd-hard" style={accentStyle(accent, { marginTop: 24 })}>
         {row(routes.rules(slug), "book", "How voting works")}

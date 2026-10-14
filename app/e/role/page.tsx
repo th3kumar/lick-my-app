@@ -92,7 +92,7 @@ export default function RolePage() {
       {problem && <GreyBanner title={problem.title} body={problem.body} style={{ marginTop: 14 }} />}
 
       <div style={{ flex: "1 0 24px" }} />
-      <TipCard sign={`${event.submitter_count} ${event.submitter_count === 1 ? "submitter" : "submitters"} so far`} />
+      <TipCard slot="submitters" sign={`${event.submitter_count} ${event.submitter_count === 1 ? "submitter" : "submitters"} so far`} />
     </Push>
   );
 }

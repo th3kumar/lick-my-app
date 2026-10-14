@@ -159,3 +159,7 @@ html[data-nav="tab"]::view-transition-old(*) { animation: none; opacity: 0; } /*
 /* TV board: images never start the browser's own drag or long-press menu — the card does the dragging */
 .lma-tv img { -webkit-user-drag: none; user-select: none; pointer-events: none; -webkit-touch-callout: none; }
 .lma-tv { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+
+/* screens that run their own push (phone /e/live/) never take part in page view transitions:
+   during their overlap two copies of the chrome exist, and duplicate names abort a transition */
+.lma-no-vt .lma-wordmark, .lma-no-vt .lma-vt-back, .lma-no-vt .lma-nav > * { view-transition-name: none !important; }

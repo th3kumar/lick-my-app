@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Icon } from "@/components/sundial";
 import { PhoneFallback, useGuard, usePhone } from "@/components/lma/phone";
-import { Push, SheetFrame, Stat, WideLink } from "@/components/lma/ui";
+import { Push, SheetFrame, Stat, TipArt, WideLink } from "@/components/lma/ui";
 import { personAccent } from "@/lib/lick-my-app/colors";
 import { countdownParts, initial, plural, weekday } from "@/lib/lick-my-app/format";
 import { useNowMinute } from "@/lib/lick-my-app/hooks";
@@ -37,8 +37,9 @@ export default function HypePage() {
           style={{ height: 148, width: "100%", objectFit: "cover", borderRadius: 16, display: "block" }}
         />
       ) : (
-        <div className="sd-hard lma-hatch-08 sd-anim-settle" style={{ height: 148, borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: "#6B6B70" }}>
-          event banner
+        // default banner art (no upload): 355 × 145 on the tip-card teal, inside the same hard-shadow card
+        <div className="sd-hard sd-anim-settle" style={{ height: 148, borderRadius: 16, background: "#7FD8DE", overflow: "hidden" }}>
+          <TipArt slot="hype-banner" ratio="355 / 145" radius={0} style={{ height: "100%" }} />
         </div>
       )}
 

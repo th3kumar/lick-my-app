@@ -1,8 +1,9 @@
 "use client";
 // App pieces built only from Sundial parts. Markup mirrors handoff/screens/*.dc.html.
 
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { haptic, NavLink, type NavDir } from "./nav";
+import { BASE_PATH } from "@/lib/lick-my-app/routes";
 import { accentStyle, CommitButton, cx, Icon } from "@/components/sundial";
 import { routes } from "@/lib/lick-my-app/routes";
 
@@ -118,14 +119,72 @@ export function HeatCells({ seconds, max, accent, style }: { seconds: number; ma
   );
 }
 
-/* ---------- tip card with art slot placeholder ---------- */
+/* ---------- tip-card art (sundial-tip-art): animated SVGs, one picked at random per showing ---------- */
 
-export function TipCard({ sign, style }: { sign: string; style?: CSSProperties }) {
+const TIP_ART = {
+  submitters: ["a-wander", "b-conga-line", "c-next-up"],
+  "voter-wait": ["a-stroll", "b-float-back", "c-snack-break"],
+  "eyes-on-tv": ["a-over-there", "b-carry-the-count", "c-phone-to-tv"],
+  "hype-banner": ["a-podium-party", "b-climb-to-s", "c-tier-tower"],
+} as const;
+export type TipSlot = keyof typeof TIP_ART;
+
+/**
+ * A random option for the slot, chosen in the browser (pages are prerendered, so picking during
+ * render would mismatch). Never the same option twice in a row on this device.
+ */
+export function useTipArt(slot: TipSlot): string | null {
+  const [src, setSrc] = useState<string | null>(null);
+  const picked = useRef<{ slot: TipSlot; src: string } | null>(null); // one pick per showing, even if the effect re-runs
+  useEffect(() => {
+    if (picked.current?.slot === slot) return setSrc(picked.current.src);
+    const options: readonly string[] = TIP_ART[slot];
+    const key = `lma:tip-art:${slot}`;
+    let last: string | null = null;
+    try {
+      last = sessionStorage.getItem(key);
+    } catch {
+      /* private mode */
+    }
+    const pool = options.length > 1 ? options.filter((o) => o !== last) : options;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    try {
+      sessionStorage.setItem(key, pick);
+    } catch {
+      /* private mode */
+    }
+    picked.current = { slot, src: `${BASE_PATH}/tip-art/${slot}/${pick}.svg` };
+    setSrc(picked.current.src);
+  }, [slot]);
+  return src;
+}
+
+/** The art itself: transparent, decorative, kept whole (contain), fades in once loaded. */
+export function TipArt({ slot, ratio = "327 / 88", radius = 10, style }: { slot: TipSlot; ratio?: string; radius?: number; style?: CSSProperties }) {
+  const src = useTipArt(slot);
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div aria-hidden="true" style={{ width: "100%", aspectRatio: ratio, borderRadius: radius, overflow: "hidden", ...style }}>
+      {src && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={src}
+          src={src}
+          alt=""
+          draggable={false}
+          onLoad={() => setLoaded(true)}
+          style={{ width: "100%", height: "100%", display: "block", objectFit: "contain", opacity: loaded ? 1 : 0, transition: "opacity 220ms var(--sd-ease-settle)" }}
+        />
+      )}
+    </div>
+  );
+}
+
+/** Teal tip card: art on top, uppercase sign below. */
+export function TipCard({ sign, slot, style }: { sign: string; slot: Exclude<TipSlot, "hype-banner">; style?: CSSProperties }) {
   return (
     <div style={{ background: "#7FD8DE", border: "1.5px solid #1A1A1C", borderRadius: 16, padding: 14, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, ...style }}>
-      <div style={{ width: "100%", height: 88, borderRadius: 10, background: "repeating-linear-gradient(135deg, rgba(11,11,12,.12) 0 6px, rgba(11,11,12,0) 6px 12px)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#0B0B0C" }}>
-        character art — drop here
-      </div>
+      <TipArt slot={slot} />
       <div style={{ background: "#FFFFFF", border: "1.5px solid #1A1A1C", borderRadius: 8, padding: "7px 12px", fontSize: 13, fontWeight: 800, textTransform: "uppercase" }}>{sign}</div>
     </div>
   );
