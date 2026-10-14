@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { accentStyle, CommitButton, cx, Icon, Toggle } from "@/components/sundial";
-import { AdminBlank, rememberEvent, useAdmin } from "@/components/lma/admin";
+import { AdminBlank, AdminMissing, forgetEvent, rememberEvent, useAdmin } from "@/components/lma/admin";
 import { useNav } from "@/components/lma/nav";
 import { peek, remember } from "@/lib/lick-my-app/cache";
 import { BackLink, GreyBanner, Menu, Push, SheetCard, SheetFrame, useSheetExit } from "@/components/lma/ui";
@@ -52,6 +52,7 @@ export default function EventDetailsPage() {
   const isNew = id === "new";
   const router = useRouter();
   const { token, fail } = useAdmin();
+  const [missing, setMissing] = useState(false);
   const { go } = useNav();
   const [event, setEvent] = useState<AdminEvent | null>(() => (isNew ? null : peek(`event:${id}`)));
   const [form, setForm] = useState<Form | null>(() => (isNew ? blank() : event ? fromEvent(event) : null));
@@ -65,7 +66,10 @@ export default function EventDetailsPage() {
     if (isNew) return;
     try {
       const e = await api.adminEvent(token, id);
-      if (!e) return router.replace(routes.admin());
+      if (!e) {
+        forgetEvent(id);
+        return setMissing(true);
+      }
       setEvent(remember(`event:${id}`, e));
       rememberEvent(e.id);
       if (!dirty.current) setForm(fromEvent(e));
@@ -89,6 +93,7 @@ export default function EventDetailsPage() {
     setForm((f) => (f ? { ...f, settings: { ...f.settings, [k]: v } } : f));
   };
 
+  if (missing) return <AdminMissing />;
   if (!form) return <AdminBlank />;
 
   const locked = !!event && !["draft", "pre"].includes(event.phase);

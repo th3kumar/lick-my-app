@@ -2,7 +2,7 @@
 // A1 · Events — handoff/screens/p1h-admin-events.dc.html
 import { useCallback, useEffect, useRef, useState } from "react";
 import { accentStyle, CommitButton, Icon } from "@/components/sundial";
-import { AdminBlank, rememberEvent, useAdmin } from "@/components/lma/admin";
+import { AdminBlank, forgetEvent, lastEvent, rememberEvent, useAdmin } from "@/components/lma/admin";
 import { NavLink, useNav } from "@/components/lma/nav";
 import { peek, remember } from "@/lib/lick-my-app/cache";
 import { QR } from "@/components/lma/qr";
@@ -28,6 +28,12 @@ export default function EventsPage() {
     () =>
       api.adminEvents(token).then((v) => {
         v.forEach((e) => remember(`event:${e.id}`, e)); // Details opens instantly from here
+        // the tab bar follows the last event worked on — unless it was deleted / archived: then the next upcoming one
+        const live = v.filter((e) => !e.archived);
+        const last = lastEvent();
+        if (!last || !live.some((e) => e.id === last)) {
+          rememberEvent(live.find((e) => e.phase !== "done")?.id ?? live[0]?.id ?? null);
+        }
         setEvents(remember("events", v));
       }, (e) => setProblem(fail(e))),
     [token, fail],
@@ -106,8 +112,14 @@ export default function EventsPage() {
                           i={i}
                           onQr={() => setQrFor(e)}
                           onDuplicate={() => act(async () => go(routes.event(await api.adminDuplicateEvent(token, e.id))))}
-                          onArchive={() => act(() => api.adminArchiveEvent(token, e.id, true))}
-                          onDelete={() => act(() => api.adminDeleteEvent(token, e.id))}
+                          onArchive={() => act(async () => {
+                            await api.adminArchiveEvent(token, e.id, true);
+                            forgetEvent(e.id);
+                          })}
+                          onDelete={() => act(async () => {
+                            await api.adminDeleteEvent(token, e.id);
+                            forgetEvent(e.id);
+                          })}
                         />
                       ))}
                     </div>

@@ -6,7 +6,7 @@
 import { AnimatePresence } from "motion/react";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useAdmin } from "@/components/lma/admin";
+import { AdminMissing, forgetEvent, useAdmin } from "@/components/lma/admin";
 import { useNav } from "@/components/lma/nav";
 import { Board, Countdown, Final, Montage, Preload, Reveal, Verdict, Voting } from "@/components/lma/tv-screens";
 import * as api from "@/lib/lick-my-app/api";
@@ -25,6 +25,7 @@ export default function ShowPage() {
   const { token, fail } = useAdmin();
   const { go } = useNav();
   const [s, setS] = useState<ShowState | null>(null);
+  const [missing, setMissing] = useState(false);
   const [scale, setScale] = useState(1);
   const [drawer, setDrawer] = useState(true);
   const [verdictFor, setVerdictFor] = useState<string | null>(null); // T7 shown for this character
@@ -37,7 +38,12 @@ export default function ShowPage() {
 
   const load = useCallback(async () => {
     try {
-      setS(await api.showState(token, id));
+      const v = await api.showState(token, id);
+      if (!v) {
+        forgetEvent(id);
+        return setMissing(true);
+      }
+      setS(v);
     } catch (e) {
       fail(e);
     }
@@ -244,6 +250,7 @@ export default function ShowPage() {
   }, [s, current, act, token, id, start, verdictOpen]);
 
   /* ---------- render ---------- */
+  if (missing) return <AdminMissing />;
   if (!s) return <div className="lma-tv" />;
 
   const laneOf = (c: ShowCharacter): number | null => {

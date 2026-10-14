@@ -4,7 +4,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { NavLink } from "./nav";
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, Fragment, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { CommitButton, cx, Icon } from "@/components/sundial";
 import { GreyBanner } from "./ui";
 import * as api from "@/lib/lick-my-app/api";
@@ -93,7 +93,8 @@ function AdminChrome({ children }: { children: ReactNode }) {
   return (
     <div className="lma-admin">
       <AdminHeader active={active} eventId={m ? id : remembered} />
-      {children}
+      {/* a different ?id= is a different page: start it fresh */}
+      <Fragment key={qid ?? "events"}>{children}</Fragment>
     </div>
   );
 }
@@ -154,10 +155,14 @@ const TABS: { key: AdminTab; icon: string; label: string; path: (id: string) => 
 ];
 
 /** Remembers the event the admin last worked on, so the tab bar has somewhere to go from /admin. */
-export const rememberEvent = (id: string) => {
+export const rememberEvent = (id: string | null) => {
   if (flag("admin-event") === id) return;
   setFlag("admin-event", id);
   window.dispatchEvent(new Event("lma-admin-event"));
+};
+/** The event is gone (deleted elsewhere): stop pointing the tab bar at it. */
+export const forgetEvent = (id: string) => {
+  if (flag("admin-event") === id) rememberEvent(null);
 };
 export const lastEvent = () => flag("admin-event");
 
@@ -224,3 +229,19 @@ export function PageHead({ title, caption, action, captionVt }: { title: string;
 
 /** Placeholder body while loading (no spinner — Sundial has none). */
 export const AdminBlank = () => <div style={{ minHeight: 400 }} aria-busy="true" />;
+
+/** The event in the link doesn't exist any more (deleted, or an old link). Never a blank page. */
+export function AdminMissing() {
+  return (
+    <main className="lma-main">
+      <div className="lma-empty" style={{ paddingTop: 96 }}>
+        <Icon name="calendar" size={24} />
+        <div className="lma-empty__title">Couldn’t find that event</div>
+        <div className="lma-empty__body">it may have been deleted, or the link is from an older version. pick one from your events.</div>
+        <NavLink className="sd-btn sd-hard sd-press" href={routes.admin()} dir="back" style={{ marginTop: 16 }}>
+          Back to events
+        </NavLink>
+      </div>
+    </main>
+  );
+}

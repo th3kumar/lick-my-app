@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { accentStyle, CommitButton, Icon } from "@/components/sundial";
-import { AdminBlank, PageHead, rememberEvent, useAdmin } from "@/components/lma/admin";
+import { AdminBlank, AdminMissing, forgetEvent, PageHead, rememberEvent, useAdmin } from "@/components/lma/admin";
 import { peek, remember } from "@/lib/lick-my-app/cache";
 import { ConfirmSheet, GreyBanner, Menu, Push, SheetCard, SheetFrame, Stat, useSheetExit } from "@/components/lma/ui";
 import * as api from "@/lib/lick-my-app/api";
@@ -26,6 +26,7 @@ export default function PeoplePage() {
   const id = useSearchParams().get("id") ?? "";
   const router = useRouter();
   const { token, fail } = useAdmin();
+  const [missing, setMissing] = useState(false);
   const [event, setEvent] = useState<AdminEvent | null>(() => peek(`event:${id}`));
   const [people, setPeople] = useState<AdminPerson[] | null>(() => peek(`people:${id}`));
   const [filter, setFilter] = useState<Filter>(null);
@@ -37,7 +38,10 @@ export default function PeoplePage() {
   const load = useCallback(async () => {
     try {
       const [e, p] = await Promise.all([api.adminEvent(token, id), api.adminPeople(token, id)]);
-      if (!e) return router.replace(routes.admin());
+      if (!e) {
+        forgetEvent(id);
+        return setMissing(true);
+      }
       rememberEvent(e.id);
       setEvent(remember(`event:${id}`, e));
       setPeople(remember(`people:${id}`, p));
@@ -50,6 +54,7 @@ export default function PeoplePage() {
   }, [load]);
   useEventChanges(id, load);
 
+  if (missing) return <AdminMissing />;
   if (!event || !people) return <AdminBlank />;
 
   const max = event.settings.max_chars;

@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { accentStyle, arcChars, cx, Toggle } from "@/components/sundial";
-import { AdminBlank, rememberEvent, useAdmin } from "@/components/lma/admin";
+import { AdminBlank, AdminMissing, forgetEvent, rememberEvent, useAdmin } from "@/components/lma/admin";
 import { haptic, useNav } from "@/components/lma/nav";
 import { ConfirmSheet, GreyBanner, Menu, Push } from "@/components/lma/ui";
 import * as api from "@/lib/lick-my-app/api";
@@ -37,6 +37,7 @@ const KEYS: [string, string][] = [
 export default function LiveControlPage() {
   const id = useSearchParams().get("id") ?? "";
   const { token, fail } = useAdmin();
+  const [missing, setMissing] = useState(false);
   const { go } = useNav();
   const [s, setS] = useState<ShowState | null>(() => peek(`show:${id}`));
   const [ready, setReady] = useState(0);
@@ -48,7 +49,11 @@ export default function LiveControlPage() {
   const load = useCallback(async () => {
     try {
       const v = await api.showState(token, id);
-      if (v) {
+      if (!v) {
+        forgetEvent(id);
+        return setMissing(true);
+      }
+      {
         rememberEvent(id);
         setS(remember(`show:${id}`, v));
       }
@@ -84,6 +89,7 @@ export default function LiveControlPage() {
     }
   };
 
+  if (missing) return <AdminMissing />;
   if (!s) return <AdminBlank />;
 
   const phase = s.phase;

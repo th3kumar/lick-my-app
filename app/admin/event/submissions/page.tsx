@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { accentStyle, Icon, Toggle, useLongPress } from "@/components/sundial";
-import { AdminBlank, PageHead, rememberEvent, useAdmin } from "@/components/lma/admin";
+import { AdminBlank, AdminMissing, forgetEvent, PageHead, rememberEvent, useAdmin } from "@/components/lma/admin";
 import { peek, remember } from "@/lib/lick-my-app/cache";
 import { CharacterEditor, type EditorSave } from "@/components/lma/character-editor";
 import { MontagePlayer } from "@/components/lma/montage-player";
@@ -22,6 +22,7 @@ export default function SubmissionsPage() {
   const id = useSearchParams().get("id") ?? "";
   const router = useRouter();
   const { token, fail } = useAdmin();
+  const [missing, setMissing] = useState(false);
   const [event, setEvent] = useState<AdminEvent | null>(() => peek(`event:${id}`));
   const [data, setData] = useState<Submissions | null>(() => peek(`subs:${id}`));
   const [people, setPeople] = useState<AdminPerson[]>(() => peek(`people:${id}`) ?? []);
@@ -36,7 +37,10 @@ export default function SubmissionsPage() {
   const load = useCallback(async () => {
     try {
       const [e, s, p] = await Promise.all([api.adminEvent(token, id), api.adminSubmissions(token, id), api.adminPeople(token, id)]);
-      if (!e) return router.replace(routes.admin());
+      if (!e) {
+        forgetEvent(id);
+        return setMissing(true);
+      }
       rememberEvent(e.id);
       setEvent(remember(`event:${id}`, e));
       setData(remember(`subs:${id}`, s));
@@ -50,6 +54,7 @@ export default function SubmissionsPage() {
   }, [load]);
   useEventChanges(id, load);
 
+  if (missing) return <AdminMissing />;
   if (!event || !data) return <AdminBlank />;
 
   const byId = new Map(people.map((p) => [p.id, p]));

@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { accentStyle, Icon } from "@/components/sundial";
-import { AdminBlank, rememberEvent, useAdmin } from "@/components/lma/admin";
+import { AdminBlank, AdminMissing, forgetEvent, rememberEvent, useAdmin } from "@/components/lma/admin";
 import { useNav } from "@/components/lma/nav";
 import { Final, TierToken } from "@/components/lma/tv-screens";
 import { ConfirmSheet, GreyBanner, Push, Stat } from "@/components/lma/ui";
@@ -20,6 +20,7 @@ const wash = (c: string, a = 22) => `color-mix(in srgb, ${c} ${a}%, transparent)
 export default function ResultsPage() {
   const id = useSearchParams().get("id") ?? "";
   const { token, fail } = useAdmin();
+  const [missing, setMissing] = useState(false);
   const { go } = useNav();
   const [s, setS] = useState<ShowState | null>(() => peek(`show:${id}`));
   const [confirmReset, setConfirmReset] = useState(false);
@@ -30,7 +31,11 @@ export default function ResultsPage() {
   const load = useCallback(async () => {
     try {
       const v = await api.showState(token, id);
-      if (v) {
+      if (!v) {
+        forgetEvent(id);
+        return setMissing(true);
+      }
+      {
         rememberEvent(id);
         setS(remember(`show:${id}`, v));
       }
@@ -43,6 +48,7 @@ export default function ResultsPage() {
   }, [load]);
   useEventChanges(id, load);
 
+  if (missing) return <AdminMissing />;
   if (!s) return <AdminBlank />;
 
   const rows = characterRows(s);
