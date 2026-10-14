@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect x="9" y="9" width="48" height="48" rx="14" fill="#DFCFA2" stroke="#1A1A1C" stroke-width="3"/>
+  <rect x="5" y="5" width="48" height="48" rx="14" fill="#FFFFFF" stroke="#1A1A1C" stroke-width="3"/>
+  <text x="29" y="38" text-anchor="middle" font-family="Nunito, system-ui, sans-serif" font-size="22" font-weight="900" fill="#0B0B0C">LMA</text>
+</svg>

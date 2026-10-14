@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TV · Board (Mystery)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+.tr{display:flex;align-items:center;gap:12px;height:64px}
+.tt{width:48px;height:48px;border-radius:999px;border:1.5px solid #1A1A1C;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;flex-shrink:0}
+.lane{flex:1;height:64px;background:#F4F4F6;border-radius:12px;display:flex;align-items:center;gap:8px;padding:0 8px}
+.mc{position:relative;width:52px;height:52px;border-radius:12px;border:1.5px solid #1A1A1C;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;font-size:9px;font-weight:800;line-height:1;text-align:center}
+.sign{position:absolute;bottom:-9px;left:50%;transform:translateX(-50%);background:#FFFFFF;border:1.5px solid #1A1A1C;border-radius:8px;padding:2px 6px;font-size:9px;font-weight:800;white-space:nowrap}
+.my{width:96px;height:96px;border-radius:16px;border:1.5px solid #1A1A1C;background:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;flex-shrink:0}
+.my b{font-size:40px;font-weight:900;line-height:1;letter-spacing:-0.03em}
+.my span{font-size:13px;font-weight:800;color:#6B6B70}
+.key{background:#F0F0F3;border-radius:8px;padding:3px 9px;font-size:13px;font-weight:800;color:#0B0B0C}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; overflow: hidden; font-family: Nunito, 'SF Pro Rounded', -apple-system, system-ui, sans-serif; color: #0B0B0C; background: #FFFFFF; padding: 28px 40px; display: flex; flex-direction: column; gap: 14px">
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <div style="display: flex; align-items: baseline; gap: 14px"><span style="font-size: 24px; font-weight: 900; letter-spacing: -0.02em">[TOPIC]</span><span style="font-size: 15px; font-weight: 700; color: #6B6B70">5 of 14 ranked · about 18 min left</span></div>
+    <span style="background: #0B0B0C; color: #FFFFFF; border-radius: 999px; padding: 8px 14px; font-size: 14px; font-weight: 800">Mystery</span>
+  </div>
+
+  <div style="display: flex; gap: 24px">
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 6px">
+      <div class="tr"><span class="tt" style="background: rgba(194, 76, 122, 0.22)">S</span><div class="lane"><span class="mc" style="background: rgba(122, 182, 72, 0.22); box-shadow: 2px 2px 0 0 rgb(186, 217, 160), 2px 2px 0 1.5px #1A1A1C">[char]</span></div></div>
+      <div class="tr"><span class="tt" style="background: rgba(194, 112, 76, 0.22)">A</span><div class="lane"><span class="mc" style="background: rgba(194, 76, 122, 0.22); box-shadow: 2px 2px 0 0 rgb(223, 162, 186), 2px 2px 0 1.5px #1A1A1C">[char]</span><span class="mc" style="background: rgba(122, 76, 194, 0.22); box-shadow: 2px 2px 0 0 rgb(186, 162, 223), 2px 2px 0 1.5px #1A1A1C">[char]</span><span class="mc" style="background: rgba(76, 141, 194, 0.22); border-width: 2.5px; box-shadow: 3px 3px 0 0 rgb(162, 196, 223), 3px 3px 0 1.5px #1A1A1C">[char]<span class="sign">CLAIMED</span></span></div></div>
+      <div class="tr"><span class="tt" style="background: rgba(194, 162, 76, 0.22)">B</span><div class="lane"><span class="mc" style="background: rgba(76, 141, 194, 0.22); box-shadow: 2px 2px 0 0 rgb(162, 196, 223), 2px 2px 0 1.5px #1A1A1C">[char]</span></div></div>
+      <div class="tr"><span class="tt" style="background: rgba(122, 182, 72, 0.22)">C</span><div class="lane"></div></div>
+      <div class="tr"><span class="tt" style="background: rgba(76, 141, 194, 0.22)">D</span><div class="lane"><span class="mc" style="background: rgba(194, 76, 122, 0.22); box-shadow: 2px 2px 0 0 rgb(223, 162, 186), 2px 2px 0 1.5px #1A1A1C">[char]</span></div></div>
+    </div>
+    <div style="width: 200px; background: #FFFFFF; border: 1.5px solid #1A1A1C; border-radius: 16px; box-shadow: 3px 3px 0 0 rgb(223, 207, 162), 3px 3px 0 1.5px #1A1A1C; padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px">
+      <div role="img" aria-label="Join QR code" style="width: 148px; height: 148px; border-radius: 10px; border: 1.5px solid #1A1A1C; background: repeating-linear-gradient(0deg, rgba(11,11,12,.10) 0 6px, rgba(11,11,12,0) 6px 12px), repeating-linear-gradient(90deg, rgba(11,11,12,.10) 0 6px, rgba(11,11,12,0) 6px 12px)"></div>
+      <div style="text-align: center"><div style="font-size: 16px; font-weight: 800">Late? Scan to vote</div><div style="font-size: 13px; font-weight: 600; color: #6B6B70">joins as a voter</div></div>
+    </div>
+  </div>
+
+  <div>
+    <div style="display: flex; justify-content: space-between; padding: 0 4px 6px"><span style="font-size: 13px; font-weight: 700; color: #6B6B70">Tray · shuffled so nobody goes twice in a row</span><span style="font-size: 13px; font-weight: 700; color: #6B6B70">9 left</span></div>
+    <div style="display: flex; gap: 14px; padding: 0 4px 4px 0">
+      <div class="my" style="box-shadow: 3px 3px 0 0 rgb(162, 196, 223), 3px 3px 0 1.5px #1A1A1C"><span>mantu</span><b>2</b></div>
+      <div class="my" style="box-shadow: 3px 3px 0 0 rgb(186, 217, 160), 3px 3px 0 1.5px #1A1A1C"><span>[user 5]</span><b>1</b></div>
+      <div class="my" style="box-shadow: 3px 3px 0 0 rgb(223, 162, 186), 3px 3px 0 1.5px #1A1A1C"><span>[user 2]</span><b>3</b></div>
+      <div class="my" style="box-shadow: 3px 3px 0 0 rgb(186, 162, 223), 3px 3px 0 1.5px #1A1A1C"><span>[user 6]</span><b>1</b></div>
+      <div class="my" style="box-shadow: 3px 3px 0 0 rgb(162, 196, 223), 3px 3px 0 1.5px #1A1A1C"><span>mantu</span><b>3</b></div>
+      <div class="my" style="box-shadow: 3px 3px 0 0 rgb(186, 217, 160), 3px 3px 0 1.5px #1A1A1C"><span>[user 5]</span><b>2</b></div>
+      <div class="my" style="box-shadow: 3px 3px 0 0 rgb(223, 162, 186), 3px 3px 0 1.5px #1A1A1C"><span>[user 2]</span><b>1</b></div>
+      <div class="my" style="box-shadow: 3px 3px 0 0 rgb(186, 162, 223), 3px 3px 0 1.5px #1A1A1C"><span>[user 6]</span><b>2</b></div>
+      <div class="my" style="box-shadow: 3px 3px 0 0 rgb(162, 196, 223), 3px 3px 0 1.5px #1A1A1C"><span>mantu</span><b>4</b></div>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 18px; align-items: center; font-size: 13px; font-weight: 700; color: #6B6B70; flex-wrap: wrap">
+    <span><span class="key">N</span> random next</span>
+    <span><span class="key">1–5</span> claim</span>
+    <span><span class="key">V</span> vote</span>
+    <span><span class="key">Z</span> undo</span>
+    <span><span class="key">M</span> mode</span>
+    <span><span class="key">D</span> who’s left</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

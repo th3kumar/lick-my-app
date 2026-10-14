@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TV · Verdict</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+.br{display:grid;grid-template-columns:52px minmax(0,1fr) 40px;gap:16px;align-items:center}
+.tt{width:52px;height:52px;border-radius:999px;border:1.5px solid #1A1A1C;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900}
+.trk{height:40px;background:#F4F4F6;border-radius:10px;overflow:hidden;display:flex}
+.fill{height:100%;border-right:1.5px solid #1A1A1C;border-radius:0 10px 10px 0}
+.n{font-size:28px;font-weight:800;text-align:right}
+.key{background:#F0F0F3;border-radius:8px;padding:3px 9px;font-size:13px;font-weight:800;color:#0B0B0C}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; overflow: hidden; font-family: Nunito, 'SF Pro Rounded', -apple-system, system-ui, sans-serif; color: #0B0B0C; background: #FFFFFF; padding: 40px 56px; display: flex; flex-direction: column; gap: 28px">
+  <div style="display: flex; align-items: baseline; justify-content: space-between">
+    <div style="display: flex; align-items: baseline; gap: 12px"><span style="font-size: 18px; font-weight: 800">The room has spoken</span><span style="font-size: 15px; font-weight: 700; color: #6B6B70">5 votes · the owner sat out</span></div>
+    <span style="font-size: 13px; font-weight: 700; color: #6B6B70"><span class="key">N</span> next character</span>
+  </div>
+
+  <div style="flex: 1; display: flex; gap: 56px; align-items: center">
+    <section aria-label="Vote distribution" style="flex: 1; display: flex; flex-direction: column; gap: 14px">
+      <div class="br"><span class="tt" style="background: rgba(194, 76, 122, 0.22)">S</span><div class="trk"></div><span class="n" style="color: #C4C4C7">0</span></div>
+      <div class="br"><span class="tt" style="background: rgba(194, 112, 76, 0.22)">A</span><div class="trk"><span class="fill" style="width: 33%; background: #C2704C"></span></div><span class="n">1</span></div>
+      <div class="br"><span class="tt" style="background: rgba(194, 162, 76, 0.22)">B</span><div class="trk"><span class="fill" style="width: 100%; background: #C2A24C; border-right: none"></span></div><span class="n">3</span></div>
+      <div class="br"><span class="tt" style="background: rgba(122, 182, 72, 0.22)">C</span><div class="trk"><span class="fill" style="width: 33%; background: #7AB648"></span></div><span class="n">1</span></div>
+      <div class="br"><span class="tt" style="background: rgba(76, 141, 194, 0.22)">D</span><div class="trk"></div><span class="n" style="color: #C4C4C7">0</span></div>
+      <div style="font-size: 15px; font-weight: 600; color: #6B6B70; padding: 6px 4px 0; line-height: 1.5">the average lands on 3.0, which is B. an exact half would round toward the claim.</div>
+    </section>
+
+    <section style="width: 420px; background: #FFFFFF; border: 1.5px solid #1A1A1C; border-radius: 20px; box-shadow: 5px 5px 0 0 rgb(162, 196, 223), 5px 5px 0 1.5px #1A1A1C; padding: 28px; display: flex; flex-direction: column; align-items: center; gap: 18px">
+      <div role="img" aria-label="Character photo" style="width: 160px; height: 160px; border-radius: 16px; border: 1.5px solid #1A1A1C; background: rgba(76, 141, 194, 0.22)"></div>
+      <div style="text-align: center">
+        <div style="font-size: 30px; font-weight: 900; letter-spacing: -0.03em; line-height: 1.1">[CHARACTER NAME]</div>
+        <div style="font-size: 15px; font-weight: 700; color: #6B6B70; margin-top: 4px">mantu</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 22px">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+          <span style="font-size: 13px; font-weight: 700; color: #6B6B70">Claimed</span>
+          <span style="width: 64px; height: 64px; border-radius: 999px; border: 1.5px dashed #C4C4C7; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 900; color: #C4C4C7">A</span>
+        </div>
+        <span aria-hidden="true" style="font-size: 30px; font-weight: 800; color: #6B6B70; margin-top: 18px">→</span>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+          <span style="font-size: 13px; font-weight: 700; color: #6B6B70">Verdict</span>
+          <span style="width: 64px; height: 64px; border-radius: 999px; border: 1.5px solid #1A1A1C; background: #FFFFFF; box-shadow: 3px 3px 0 0 rgb(223, 207, 162), 3px 3px 0 1.5px #1A1A1C; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 900">B</span>
+        </div>
+      </div>
+      <div style="font-size: 17px; font-weight: 800; color: #4C8DC2">overclaimed by one tier</div>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

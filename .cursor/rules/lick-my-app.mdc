@@ -1,0 +1,51 @@
+---
+description: Lick My App — Sundial design system, screen references, motion and product rules. Read before building any UI.
+globs:
+alwaysApply: true
+---
+
+# Lick My App build rules
+
+## Sources of truth (in this order)
+1. `tier-night-handoff/screens/*.dc.html` — pixel-exact reference for all 24 screens. Match spacing, sizes, copy, colours exactly. Open them, don't guess.
+2. `tier-night-handoff/docs/03-screens.md` — routes, data, states, behaviour per screen.
+3. `tier-night-handoff/docs/04-motion.md` — every animation and its trigger.
+4. `tier-night-handoff/docs/02-design-system.md` + `tier-night-handoff/design-system/SUNDIAL-README.md` + `tokens.json`.
+5. `tier-night-handoff/docs/01-product-plan.md` — product rules, data model, vote math.
+
+## Stack
+Next.js App Router (Vercel) · Supabase (Postgres, Storage, Realtime) · `motion` (`motion/react`) for layout/sheet/flip animations · plain CSS from `app/sundial.css` + `app/motion.css` (Tailwind optional).
+
+## Sundial — never break these
+- Use the primitives in `components/sundial.tsx` (+ app pieces in `components/lma/`) and classes in `app/sundial.css`. Don't hand-roll shadows.
+- Every object: white fill, `1.5px #1A1A1C` outline, hard 0-blur shadow down-right (3px; chips 2px; section 4px; hero 5px). Shadow colour is derived from `--accent` — set `--accent`, never hardcode a shadow.
+- Only filled shape = active tab (ink pill). No filled primary buttons.
+- ✓ commits, ✕ cancels. Never the word "Save". Button labels are verbs.
+- Required fields marked only by placeholder "Required". No asterisks, no red error states — ✓ stays disabled until valid. Informational problems use the grey `Banner`.
+- Disabled = outline + glyph `#C4C4C7`, shadow removed.
+- One `DisplayStat` per screen, on canvas, never inside a card.
+- Exactly one footer caption per inset group. Labels sentence case; prose lowercase.
+- Font: Nunito 400/600/700/800/900 via `next/font/google` (`variable: "--font-nunito"`).
+- Colours: event gold; person accents in join order (`lib/lick-my-app/colors.ts`); characters inherit owner accent; tiers default S pink · A orange · B gold · C green · D blue.
+
+## Motion — never break these
+- Five curves only: snap 180 · pop spring(.62/420) · commit spring(.42/360) · sheet 380 EaseOutQuint · settle 220 + 28ms stagger. Tokens in `lib/sundial/motion.ts`.
+- Press = translate(3,3) + shadow→0 in 90ms; release on spring(.55/400). No scale.
+- Never animate text someone is reading; counters swap instantly (the countdown numeral is the only exception).
+- Respect reduced motion (`<MotionConfig reducedMotion="user">` + `motion.css` media query).
+
+## Product invariants
+- All show state is server-side (`event.phase`, `board_step`, `current_character_id`, `voting_closes_at`, `countdown_ends_at`). TV and phones are pure renders of it via Supabase Realtime; refresh must resume.
+- Owners never vote on their own character. Votes are hidden from everyone until the reveal (RLS). The TV drawer shows names only.
+- Duplicate character names blocked on normalized name (unique `(event_id, name_norm)`), message never reveals who.
+- Vote math lives in `lib/lick-my-app/verdict.ts` — use it, don't reimplement.
+- TV: design stage 1280×720, scaled to the screen. Keyboard: N, 1–5, Space, ←/→, Esc, V, Enter, Z, M, D (only on `/show`, not when typing).
+
+## Lick My App specifics (differs from the handoff)
+- Name: **Lick My App** everywhere (wordmark, copy, code). CSS prefix `lma-` (was `tn-`).
+- Backend: Supabase only (no Cloudinary). Media in Storage bucket `lma-media`; HEIC → JPG in the browser.
+- No Supabase Auth. Phones hold a device token per event (localStorage), admin holds a session token from the passcode.
+  Tables have RLS on with no policies; every read/write goes through security-definer functions in
+  `supabase/migrations/0002_functions.sql` (wrappers in `lib/lick-my-app/api.ts`).
+- Realtime: DB triggers `realtime.send()` an empty ping to topic `event:<id>`; clients refetch. Presence on `presence:<id>`.
+- Tables are plural: events, participants, participant_secrets, characters, media, votes, blocked_attempts.

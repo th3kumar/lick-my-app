@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone · Vote</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+.cell{height:8px;border-radius:4px}
+.tok{width:40px;height:40px;border-radius:999px;border:1.5px solid #1A1A1C;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;flex-shrink:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; font-family: Nunito, 'SF Pro Rounded', -apple-system, system-ui, sans-serif; color: #0B0B0C; background: #FFFFFF; padding: 16px 16px 24px; display: flex; flex-direction: column">
+  <div style="display: flex; align-items: center; justify-content: space-between; min-height: 40px">
+    <span style="font-size: 13px; font-weight: 700; color: #6B6B70">Vote · 6 of 14</span>
+    <span><span style="font-size: 17px; font-weight: 800; color: #C2A24C">12s</span><span style="font-size: 13px; font-weight: 700; color: #6B6B70"> left</span></span>
+  </div>
+  <div aria-hidden="true" style="display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 3px; margin: 6px 0 20px">
+    <sc-for list="{{timer}}" as="t" hint-placeholder-count="20"><span class="cell" style="{{t}}"></span></sc-for>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1.5px solid #1A1A1C; border-radius: 16px; padding: 14px 16px; box-shadow: 3px 3px 0 0 rgb(162, 196, 223), 3px 3px 0 1.5px #1A1A1C">
+    <span style="width: 56px; height: 56px; border-radius: 12px; border: 1.5px solid #1A1A1C; background: rgba(76, 141, 194, 0.22); flex-shrink: 0"></span>
+    <span style="flex: 1; min-width: 0">
+      <span style="display: block; font-size: 19px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.1">[CHARACTER NAME]</span>
+      <span style="display: block; font-size: 13px; font-weight: 700; color: #6B6B70; margin-top: 4px">mantu claims A</span>
+    </span>
+  </div>
+
+  <div style="font-size: 13px; font-weight: 700; color: #6B6B70; margin: 28px 0 10px; padding-left: 4px">Where does it really belong?</div>
+  <div role="radiogroup" aria-label="Your vote" style="display: flex; flex-direction: column; gap: 12px; padding: 0 3px 3px 0">
+    <sc-for list="{{tiers}}" as="t" hint-placeholder-count="5">
+      <button type="button" role="radio" aria-checked="{{t.on}}" onClick="{{t.pick}}" style="{{t.style}}">
+        <span class="tok" style="{{t.tokStyle}}">{{t.label}}</span>
+        <span style="flex: 1; text-align: left; font-size: 19px; font-weight: 800; letter-spacing: -0.01em">{{t.label}} tier</span>
+        <span style="{{t.markStyle}}">✓</span>
+      </button>
+    </sc-for>
+  </div>
+  <div style="font-size: 13px; font-weight: 600; color: #6B6B70; padding: 12px 4px 0; line-height: 1.5">{{note}}</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+const INK = '#1A1A1C';
+const TIERS = [
+  ['S', 'rgba(194, 76, 122, 0.22)', 'rgb(223, 162, 186)'],
+  ['A', 'rgba(194, 112, 76, 0.22)', 'rgb(223, 181, 162)'],
+  ['B', 'rgba(194, 162, 76, 0.22)', 'rgb(223, 207, 162)'],
+  ['C', 'rgba(122, 182, 72, 0.22)', 'rgb(186, 217, 160)'],
+  ['D', 'rgba(76, 141, 194, 0.22)', 'rgb(162, 196, 223)']
+];
+class Component extends DCLogic {
+  state = { pick: 2 };
+  renderVals() {
+    const p = this.state.pick;
+    return {
+      timer: Array.from({ length: 20 }, (_, i) => ({ background: i < 12 ? '#C2A24C' : '#E9E9EC' })),
+      note: p === null ? 'tap a tier. you can change it until voting closes.' : `you picked ${TIERS[p][0]}. tap another to change it until voting closes — nobody sees it before the reveal.`,
+      tiers: TIERS.map(([label, wash, sh], i) => {
+        const on = i === p;
+        return {
+          label, on,
+          pick: () => this.setState({ pick: i }),
+          tokStyle: { background: wash },
+          markStyle: { fontSize: '17px', fontWeight: 800, color: '#34C759', opacity: on ? 1 : 0, transform: on ? 'scale(1)' : 'scale(0.8)', transition: 'opacity 180ms cubic-bezier(.2,0,0,1), transform 520ms cubic-bezier(.22,1.6,.36,1)' },
+          style: {
+            display: 'flex', alignItems: 'center', gap: '12px', width: '100%', minHeight: '64px',
+            background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '16px', padding: '10px 16px',
+            fontFamily: 'inherit', color: '#0B0B0C', cursor: 'pointer',
+            boxShadow: on ? `3px 3px 0 0 ${sh}, 3px 3px 0 1.5px ${INK}` : `3px 3px 0 0 #E9E9EC, 3px 3px 0 1.5px ${INK}`,
+            transition: 'box-shadow 180ms cubic-bezier(.2,0,0,1)'
+          }
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

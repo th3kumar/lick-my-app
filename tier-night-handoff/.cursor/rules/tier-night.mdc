@@ -1,0 +1,42 @@
+---
+description: Tier Night — Sundial design system, screen references, motion and product rules. Read before building any UI.
+globs:
+alwaysApply: true
+---
+
+# Tier Night build rules
+
+## Sources of truth (in this order)
+1. `handoff/screens/*.dc.html` — pixel-exact reference for all 24 screens. Match spacing, sizes, copy, colours exactly. Open them, don't guess.
+2. `handoff/docs/03-screens.md` — routes, data, states, behaviour per screen.
+3. `handoff/docs/04-motion.md` — every animation and its trigger.
+4. `handoff/docs/02-design-system.md` + `handoff/design-system/SUNDIAL-README.md` + `tokens.json`.
+5. `handoff/docs/01-product-plan.md` — product rules, data model, vote math.
+
+## Stack
+Next.js App Router (Vercel) · Supabase (Postgres, Storage, Realtime) · Cloudinary (HEIC/MOV → JPG/MP4) · `motion` (`motion/react`) for layout/sheet/flip animations · plain CSS from `app/sundial.css` + `app/motion.css` (Tailwind optional).
+
+## Sundial — never break these
+- Use the primitives in `components/sundial.tsx` and classes in `app/sundial.css`. Don't hand-roll shadows.
+- Every object: white fill, `1.5px #1A1A1C` outline, hard 0-blur shadow down-right (3px; chips 2px; section 4px; hero 5px). Shadow colour is derived from `--accent` — set `--accent`, never hardcode a shadow.
+- Only filled shape = active tab (ink pill). No filled primary buttons.
+- ✓ commits, ✕ cancels. Never the word "Save". Button labels are verbs.
+- Required fields marked only by placeholder "Required". No asterisks, no red error states — ✓ stays disabled until valid. Informational problems use the grey `Banner`.
+- Disabled = outline + glyph `#C4C4C7`, shadow removed.
+- One `DisplayStat` per screen, on canvas, never inside a card.
+- Exactly one footer caption per inset group. Labels sentence case; prose lowercase.
+- Font: Nunito 400/600/700/800/900 via `next/font/google` (`variable: "--font-nunito"`).
+- Colours: event gold; person accents in join order (`lib/tier-night/colors.ts`); characters inherit owner accent; tiers default S pink · A orange · B gold · C green · D blue.
+
+## Motion — never break these
+- Five curves only: snap 180 · pop spring(.62/420) · commit spring(.42/360) · sheet 380 EaseOutQuint · settle 220 + 28ms stagger. Tokens in `lib/sundial/motion.ts`.
+- Press = translate(3,3) + shadow→0 in 90ms; release on spring(.55/400). No scale.
+- Never animate text someone is reading; counters swap instantly (the countdown numeral is the only exception).
+- Respect reduced motion (`<MotionConfig reducedMotion="user">` + `motion.css` media query).
+
+## Product invariants
+- All show state is server-side (`event.phase`, `board_step`, `current_character_id`, `voting_closes_at`, `countdown_ends_at`). TV and phones are pure renders of it via Supabase Realtime; refresh must resume.
+- Owners never vote on their own character. Votes are hidden from everyone until the reveal (RLS). The TV drawer shows names only.
+- Duplicate character names blocked on normalized name (unique `(event_id, name_norm)`), message never reveals who.
+- Vote math lives in `lib/tier-night/verdict.ts` — use it, don't reimplement.
+- TV: design stage 1280×720, scaled to the screen. Keyboard: N, 1–5, Space, ←/→, Esc, V, Enter, Z, M, D (only on `/show`, not when typing).

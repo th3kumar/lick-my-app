@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #FFFFFF; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: #0B0B0C; text-decoration: none; border-bottom: 1.5px solid #C4C4C7; }
+  a:hover { color: #6B6B70; border-bottom-color: #6B6B70; }
+  @keyframes sd-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes sd-halo { 0% { transform: scale(1); opacity: .4; } 100% { transform: scale(1.8); opacity: 0; } }
+</style>
+</helmet>
+
+<div style="font-family: Nunito, 'SF Pro Rounded', -apple-system, system-ui, sans-serif; color: #0B0B0C; background: #FFFFFF; min-height: 100vh; padding: 0 0 120px;">
+
+  <div style="position: sticky; top: 0; z-index: 40; background: rgba(255,255,255,.9); backdrop-filter: blur(12px); border-bottom: 1.5px solid #E6E6EA;">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 12px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px;">
+      <span style="font-size: 16px; font-weight: 800; letter-spacing: -0.01em;">{{ systemName }}</span>
+      <span style="font-size: 13px; color: #6B6B70; margin-right: auto; font-weight: 600;">v2 · rebuilt from screenshots</span>
+      <a href="#foundations" style="font-size: 13px; color: #6B6B70; border: none; font-weight: 700;">Foundations</a>
+      <a href="#buttons" style="font-size: 13px; color: #6B6B70; border: none; font-weight: 700;">Buttons</a>
+      <a href="#cards" style="font-size: 13px; color: #6B6B70; border: none; font-weight: 700;">Cards</a>
+      <a href="#headers" style="font-size: 13px; color: #6B6B70; border: none; font-weight: 700;">Headers</a>
+      <a href="#lists" style="font-size: 13px; color: #6B6B70; border: none; font-weight: 700;">Lists</a>
+      <a href="#inputs" style="font-size: 13px; color: #6B6B70; border: none; font-weight: 700;">Inputs</a>
+      <a href="#nav" style="font-size: 13px; color: #6B6B70; border: none; font-weight: 700;">Nav</a>
+      <a href="#motion" style="font-size: 13px; color: #6B6B70; border: none; font-weight: 700;">Motion</a>
+    </div>
+  </div>
+
+  <div style="max-width: 1120px; margin: 0 auto; padding: 0 24px;">
+
+    <header style="padding: 72px 0 40px; max-width: 760px;">
+      <div style="font-size: 13px; color: #6B6B70; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 20px;">Design system · v2</div>
+      <h1 style="font-size: 60px; line-height: 1.02; font-weight: 900; letter-spacing: -0.035em; margin: 0 0 20px;">{{ systemName }}</h1>
+      <p style="font-size: 20px; line-height: 1.45; font-weight: 600; margin: 0 0 16px; text-wrap: pretty;">Every object on screen is an outlined white shape sitting on a hard, accent-coloured offset shadow. Nothing is blurred, nothing is filled with brand colour, and the type is rounded and heavy.</p>
+      <p style="font-size: 15px; line-height: 1.6; color: #6B6B70; font-weight: 600; margin: 0; text-wrap: pretty;">Pick an accent — the whole page re-derives. Motion personality is playful: overshoot on pop, bounce on commit, and a press that physically drops the object onto its own shadow.</p>
+    </header>
+
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 44px;">
+      <sc-for list="{{ swatches }}" as="s" hint-placeholder-count="6">
+        <button onClick="{{ s.pick }}" title="{{ s.hex }}" style="{{ s.style }}"></button>
+      </sc-for>
+      <span style="font-size: 13px; color: #6B6B70; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin-left: 6px;">{{ accent }}</span>
+    </div>
+
+    <section style="{{ heroCardStyle }}">
+      <div style="font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #6B6B70; margin-bottom: 14px;">The two rules</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px;">
+        <div>
+          <p style="font-size: 22px; line-height: 1.3; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 10px; text-wrap: pretty;">1 · The chrome has no brand colour. Every saturated pixel belongs to a user-created object.</p>
+          <p style="font-size: 14px; color: #6B6B70; font-weight: 600; line-height: 1.55; margin: 0; text-wrap: pretty;">One accent value drives the offset shadow, the symbol token, the metric text, the heatmap and the day markers. Nothing else in the UI knows the colour exists.</p>
+        </div>
+        <div>
+          <p style="font-size: 22px; line-height: 1.3; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 10px; text-wrap: pretty;">2 · Elevation is drawn, not blurred. Outline + hard offset, always.</p>
+          <p style="font-size: 14px; color: #6B6B70; font-weight: 600; line-height: 1.55; margin: 0; text-wrap: pretty;">1.5px near-black outline, 3px/3px offset shadow at 0 blur, tinted from the object's accent. There is no blur radius anywhere in the system — which is exactly why pressing can collapse the offset and feel physical.</p>
+        </div>
+      </div>
+      <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 28px;">
+        <div style="{{ objCardStyle }}">
+          <span style="{{ tokenStyle }}">📚</span>
+          <span style="flex: 1; min-width: 0; font-size: 19px; font-weight: 800;">Reading</span>
+          <span style="text-align: right;">
+            <span style="{{ metricStyle }}">10h 13m</span>
+            <span style="display: block; font-size: 13px; font-weight: 700; color: #6B6B70;">This Week</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <h2 id="foundations" style="{{ h2Style }}">Foundations</h2>
+
+    <section style="{{ sectionStyle }}">
+      <h3 style="{{ h3Style }}">Colour</h3>
+      <p style="{{ leadStyle }}">Four layers: neutral chrome, a tiny semantic set, one statistic hue for display numerals, and the unbounded per-object accent slot.</p>
+
+      <div style="{{ labelStyle }}">Chrome</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 30px;">
+        <sc-for list="{{ chrome }}" as="t" hint-placeholder-count="8">
+          <div style="border: 1.5px solid #E6E6EA; border-radius: 12px; overflow: hidden;">
+            <div style="{{ t.swatchStyle }}"></div>
+            <div style="padding: 8px 10px 10px;">
+              <div style="font-size: 13px; font-weight: 800;">{{ t.name }}</div>
+              <div style="font-size: 11px; color: #6B6B70; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin-top: 2px;">{{ t.hex }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="{{ labelStyle }}">Semantics &amp; the statistic hue</div>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px;">
+        <sc-for list="{{ semantics }}" as="t" hint-placeholder-count="6">
+          <div style="display: flex; align-items: center; gap: 10px; border: 1.5px solid #E6E6EA; border-radius: 999px; padding: 7px 16px 7px 7px;">
+            <span style="{{ t.dotStyle }}"></span>
+            <span style="font-size: 13px; font-weight: 800;">{{ t.name }}</span>
+            <span style="font-size: 12px; color: #6B6B70; font-weight: 600;">{{ t.use }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="{{ labelStyle }}">Accent derivation — everything below comes from one value</div>
+      <div style="border: 1.5px solid #E6E6EA; border-radius: 16px; overflow: hidden;">
+        <sc-for list="{{ derivation }}" as="d" hint-placeholder-count="7">
+          <div style="display: flex; align-items: center; gap: 16px; padding: 13px 16px; border-bottom: 1.5px solid #E6E6EA; flex-wrap: wrap;">
+            <span style="{{ d.chipStyle }}"></span>
+            <span style="font-size: 14px; font-weight: 800; min-width: 110px;">{{ d.name }}</span>
+            <span style="font-size: 12px; color: #6B6B70; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; min-width: 200px;">{{ d.formula }}</span>
+            <span style="font-size: 13px; color: #6B6B70; font-weight: 600; flex: 1; min-width: 180px;">{{ d.use }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <p style="font-size: 13px; color: #6B6B70; font-weight: 600; margin: 12px 0 0; max-width: 680px; text-wrap: pretty;">New in v2: <strong style="color: #0B0B0C;">shadow</strong> is the load-bearing derivation. It is the accent lightened toward white so it reads as a printed second impression, never as a glow — and it is the only place a large area of accent appears.</p>
+    </section>
+
+    <section style="{{ sectionStyle }}">
+      <h3 style="{{ h3Style }}">Type</h3>
+      <p style="{{ leadStyle }}">A rounded geometric sans, set heavy. Weight range is wide — 900 for screen titles, 600 for body — because the outlined shapes need type with equal presence.</p>
+      <sc-for list="{{ typeScale }}" as="t" hint-placeholder-count="10">
+        <div style="display: flex; align-items: baseline; gap: 20px; padding: 15px 0; border-bottom: 1.5px solid #E6E6EA; flex-wrap: wrap;">
+          <div style="width: 130px; flex-shrink: 0;">
+            <div style="font-size: 13px; font-weight: 800;">{{ t.name }}</div>
+            <div style="font-size: 11px; color: #6B6B70; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">{{ t.spec }}</div>
+          </div>
+          <div style="{{ t.sampleStyle }}">{{ t.sample }}</div>
+          <div style="font-size: 12px; color: #6B6B70; font-weight: 600; flex: 1; min-width: 160px; text-align: right;">{{ t.use }}</div>
+        </div>
+      </sc-for>
+      <p style="font-size: 13px; color: #6B6B70; font-weight: 600; margin: 16px 0 0; max-width: 680px; text-wrap: pretty;">Prose passages are lowercase first person; UI labels are sentence case; only the arc ring is uppercase. That split is the whole voice.</p>
+    </section>
+
+    <section style="{{ sectionStyle }}">
+      <h3 style="{{ h3Style }}">Shape &amp; elevation</h3>
+      <p style="{{ leadStyle }}">One outline weight, one offset distance, four radii. The press state is part of the elevation spec, not a separate interaction — drop the object 3px onto its shadow and the shadow disappears.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px;">
+        <div>
+          <div style="{{ labelStyle }}">Radius</div>
+          <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+            <sc-for list="{{ radii }}" as="r" hint-placeholder-count="4">
+              <div style="text-align: center;">
+                <div style="{{ r.boxStyle }}"></div>
+                <div style="font-size: 12px; margin-top: 8px; font-weight: 800;">{{ r.name }}</div>
+                <div style="font-size: 11px; color: #6B6B70; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">{{ r.value }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div>
+          <div style="{{ labelStyle }}">Elevation — rest vs pressed (press the tile)</div>
+          <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+            <div onMouseDown="{{ pressDown }}" onMouseUp="{{ pressUp }}" onMouseLeave="{{ pressUp }}" style="{{ pressTileStyle }}">Press me</div>
+            <div style="font-size: 13px; color: #6B6B70; font-weight: 600; flex: 1; min-width: 180px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; line-height: 1.7;">outline 1.5px #1A1A1C<br>shadow 3px 3px 0 accent-shadow<br>pressed: translate(3px,3px), 0 0 0</div>
+          </div>
+        </div>
+      </div>
+      <div style="{{ calloutStyle }}">Never combine the hard offset with a blurred shadow, and never offset in any direction but down-right. Two objects overlapping keep both outlines — the shadow is opaque, so stacking reads correctly with no z-fighting tricks.</div>
+    </section>
+
+    <h2 id="buttons" style="{{ h2Style }}">Buttons</h2>
+
+    <section style="{{ sectionStyle }}">
+      <h3 style="{{ h3Style }}">Six shapes, one construction</h3>
+      <p style="{{ leadStyle }}">Every button is the same outlined-plus-offset shape at a different size. Labels are verbs. There is no filled primary button except the active tab.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 18px;">
+        <div style="{{ specimenStyle }}">
+          <button style="{{ btnPrimaryStyle }}">Add Arc</button>
+          <div style="{{ capStyle }}">Primary pill<br><span style="color:#6B6B70;">14px radius · 15/800 · 14×22 pad</span></div>
+        </div>
+        <div style="{{ specimenStyle }}">
+          <button style="{{ btnWideStyle }}"><span style="font-size: 17px;">⊕</span> Add Activity</button>
+          <div style="{{ capStyle }}">Full-width action<br><span style="color:#6B6B70;">inside forms, leading glyph</span></div>
+        </div>
+        <div style="{{ specimenStyle }}">
+          <div style="display: flex; gap: 12px;">
+            <button style="{{ btnIconStyle }}">⋯</button>
+            <button style="{{ btnIconStyle }}">⊕</button>
+            <button style="{{ btnIconStyle }}">‹</button>
+          </div>
+          <div style="{{ capStyle }}">Nav icon button<br><span style="color:#6B6B70;">40px circle · monoline glyph</span></div>
+        </div>
+        <div style="{{ specimenStyle }}">
+          <div style="display: flex; gap: 12px;">
+            <button style="{{ btnCancelStyle }}">✕</button>
+            <button style="{{ btnConfirmStyle }}">✓</button>
+          </div>
+          <div style="{{ capStyle }}">Modal commit pair<br><span style="color:#6B6B70;">✕ destructive · ✓ confirm · never "Save"</span></div>
+        </div>
+        <div style="{{ specimenStyle }}">
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <sc-for list="{{ quickSteps }}" as="q" hint-placeholder-count="4">
+              <button onClick="{{ q.apply }}" style="{{ q.style }}">{{ q.label }}</button>
+            </sc-for>
+          </div>
+          <div style="{{ capStyle }}">Quick-adjust chip<br><span style="color:#6B6B70;">no shadow — chips sit flat</span></div>
+        </div>
+        <div style="{{ specimenStyle }}">
+          <div style="{{ glyphBtnStyle }}">✛</div>
+          <div style="{{ capStyle }}">Tally glyph button<br><span style="color:#6B6B70;">the arc CTA centre · 72px</span></div>
+        </div>
+      </div>
+      <div style="{{ calloutStyle }}">Disabled state is the outline and glyph at text-tertiary with the shadow removed — the object sits flat on the page, which reads as "not pressable" without any opacity trick.</div>
+    </section>
+
+    <h2 id="cards" style="{{ h2Style }}">Cards</h2>
+
+    <section style="{{ sectionStyle }}">
+      <h3 style="{{ h3Style }}">Object card</h3>
+      <p style="{{ leadStyle }}">The atom. Emoji token, name, right-aligned metric over timeframe. Long press edits. The card is the only component that carries the object's accent in four places at once.</p>
+      <div style="display: flex; flex-direction: column; gap: 16px; max-width: 460px;">
+        <div style="{{ objCardStyle }}">
+          <span style="{{ tokenStyle }}">📚</span>
+          <span style="flex: 1; min-width: 0; font-size: 19px; font-weight: 800;">Reading</span>
+          <span style="text-align: right;">
+            <span style="{{ metricStyle }}">10h 13m</span>
+            <span style="display: block; font-size: 13px; font-weight: 700; color: #6B6B70;">This Week</span>
+          </span>
+        </div>
+        <div style="{{ objCardAltStyle }}">
+          <span style="{{ tokenAltStyle }}">🏃</span>
+          <span style="flex: 1; min-width: 0; font-size: 19px; font-weight: 800;">Running</span>
+          <span style="text-align: right;">
+            <span style="font-size: 17px; font-weight: 800; color: #7AB648;">13 mi</span>
+            <span style="display: block; font-size: 13px; font-weight: 700; color: #6B6B70;">This Week</span>
+          </span>
+        </div>
+        <div style="{{ objCardActionStyle }}">
+          <span style="{{ tokenStyle }}">📚</span>
+          <span style="flex: 1; min-width: 0; font-size: 19px; font-weight: 800;">Reading</span>
+          <span style="{{ playGlyphStyle }}">▷</span>
+        </div>
+      </div>
+      <div style="{{ capStyle }}" style-hover="">Variants: metric · metric + inline action · plan row. The timeframe label is a global setting, never per-card.</div>
+    </section>
+
+    <section style="{{ sectionStyle }}">
+      <h3 style="{{ h3Style }}">Card family</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; align-items: start;">
+
+        <div>
+          <div style="{{ labelStyle }}">Navigation card</div>
+          <div style="{{ navCardStyle }}">
+            <sc-for list="{{ navRows }}" as="r" hint-placeholder-count="3">
+              <div style="{{ r.style }}">
+                <span style="font-size: 17px; width: 24px;">{{ r.icon }}</span>
+                <span style="flex: 1; font-size: 16px; font-weight: 800;">{{ r.label }}</span>
+                <span style="font-size: 16px; color: #6B6B70; font-weight: 700;">›</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="{{ capStyle }}">Icon + label + chevron, hairline between, one card. Groups of 3–4 only.</div>
+        </div>
+
+        <div>
+          <div style="{{ labelStyle }}">Stat chips</div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <sc-for list="{{ statChips }}" as="c" hint-placeholder-count="3">
+              <div onClick="{{ c.pick }}" style="{{ c.style }}">
+                <div style="font-size: 12px; font-weight: 800;">{{ c.label }}</div>
+                <div style="{{ c.valueStyle }}">{{ c.value }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="{{ capStyle }}">Selected chip reads in ink; the rest in the statistic hue. Tapping one swaps the display stat above.</div>
+        </div>
+
+        <div>
+          <div style="{{ labelStyle }}">Inspiration card</div>
+          <div style="display: flex; gap: 12px;">
+            <sc-for list="{{ inspoCards }}" as="c" hint-placeholder-count="2">
+              <div style="{{ c.style }}">
+                <span style="{{ c.badgeStyle }}">{{ c.badge }}</span>
+                <span style="display: block; font-size: 14px; font-weight: 800; margin-top: 10px; line-height: 1.25;">{{ c.title }}</span>
+                <span style="display: block; font-size: 12px; font-weight: 600; color: #6B6B70; margin-top: 4px;">{{ c.sub }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="{{ capStyle }}">Fixed 150px tiles in a horizontal scroller. Hexagon badge carries the template's own accent.</div>
+        </div>
+
+        <div>
+          <div style="{{ labelStyle }}">Dismissible banner</div>
+          <div style="background: #F4F4F6; border-radius: 14px; padding: 14px 16px; position: relative;">
+            <div style="font-size: 15px; font-weight: 800; padding-right: 40px;">🔔 get notified, stay inspired</div>
+            <div style="font-size: 13px; font-weight: 600; color: #6B6B70; margin-top: 4px;">now you can set Activity reminders in Edit Plan › Activity</div>
+            <span style="position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; border-radius: 999px; background: #DDDDE2; color: #6B6B70; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center;">✕</span>
+          </div>
+          <div style="{{ capStyle }}">The one component with no outline and no shadow — it is chrome, not an object. Lowercase headline, sentence-case UI names inside it.</div>
+        </div>
+
+        <div>
+          <div style="{{ labelStyle }}">Illustrated tip card</div>
+          <div style="background: #7FD8DE; border: 1.5px solid #1A1A1C; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <div style="width: 100%; height: 88px; border-radius: 10px; background: repeating-linear-gradient(135deg, rgba(11,11,12,.12) 0 6px, rgba(11,11,12,0) 6px 12px); display: flex; align-items: center; justify-content: center; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px;">character art — drop here</div>
+            <div style="background: #FFFFFF; border: 1.5px solid #1A1A1C; border-radius: 8px; padding: 7px 12px; font-size: 13px; font-weight: 800;">LONG PRESS TO EDIT</div>
+          </div>
+          <div style="{{ capStyle }}">In-list and dismissible, never an overlay tour. Flat saturated ground, hand-lettered sign, one instruction.</div>
+        </div>
+
+        <div>
+          <div style="{{ labelStyle }}">Empty state</div>
+          <div style="border: 1.5px dashed #E6E6EA; border-radius: 16px; padding: 28px 18px; text-align: center;">
+            <div style="font-size: 24px;">🌱</div>
+            <div style="font-size: 18px; font-weight: 800; margin-top: 8px;">No Arcs yet!</div>
+            <div style="font-size: 13px; font-weight: 600; color: #6B6B70; margin-top: 4px; line-height: 1.45;">Use Arcs to track Streaks or organize your Activities.</div>
+            <button style="{{ btnPrimaryStyle }}">Add Arc</button>
+          </div>
+          <div style="{{ capStyle }}">Glyph · exclamation headline · one-sentence why · one button. The dashed border is documentation only — in the app the empty state floats on white.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <h2 id="headers" style="{{ h2Style }}">Headers &amp; display stats</h2>
+
+    <section style="{{ sectionStyle }}">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px;">
+        <div>
+          <div style="{{ labelStyle }}">Nav row + screen title</div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
+            <button style="{{ btnIconStyle }}">‹</button>
+            <button style="{{ btnIconStyle }}">⊘</button>
+          </div>
+          <div style="font-size: 38px; font-weight: 900; letter-spacing: -0.035em;">Reading</div>
+          <div style="{{ capStyle }}">Icon buttons pin to the corners; the title sits below them, left-aligned, and scrolls under a centred 17/800 nav title.</div>
+
+          <div style="{{ labelStyle }}">Section header</div>
+          <div style="font-size: 24px; font-weight: 900; letter-spacing: -0.02em;">Recent Sessions</div>
+          <div style="font-size: 13px; font-weight: 700; color: #6B6B70; margin-top: 14px;">Measurements</div>
+          <div style="{{ capStyle }}">Two levels: a 24/900 in-page header, and a 13/700 sentence-case group header above inset lists. Never uppercase.</div>
+        </div>
+
+        <div>
+          <div style="{{ labelStyle }}">Display stat — the signature header</div>
+          <div style="display: flex; align-items: baseline; gap: 4px; padding: 10px 0 4px;">
+            <span style="{{ displayNumStyle }}">8</span>
+            <span style="{{ displayUnitStyle }}">h</span>
+            <span style="{{ displayNumStyle }}">13</span>
+            <span style="{{ displayUnitStyle }}">m</span>
+          </div>
+          <div style="font-size: 16px; font-weight: 800; margin-top: 2px;">Time Spent</div>
+          <div style="{{ capStyle }}">Numerals in 900 weight, white fill, 2px ink outline and a hard offset duplicate in the statistic hue. Units are filled in the same hue at 60% of the numeral size. Only ever one of these per screen, and only for a number the user came to see.</div>
+          <div style="{{ calloutStyle }}">Because the fill is white, this style is the one place the system has no contrast guarantee on top of a coloured ground. Keep it on canvas, never on a card.</div>
+        </div>
+      </div>
+    </section>
+
+    <h2 id="lists" style="{{ h2Style }}">List items</h2>
+
+    <section style="{{ sectionStyle }}">
+      <p style="{{ leadStyle }}">Five row types. The trailing element tells the user what will happen: chevron pushes a screen, chevron pair opens a menu in place, toggle commits instantly, pill opens a picker.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+        <div>
+          <div style="{{ labelStyle }}">Inset group</div>
+          <div style="{{ insetGroupStyle }}">
+            <div style="{{ rowStyle }}"><span style="flex: 1; font-size: 16px; font-weight: 700;">Theme</span><span style="font-size: 15px; font-weight: 700; color: #6B6B70;">System</span><span style="font-size: 12px; color: #6B6B70; padding-left: 8px;">⌃⌄</span></div>
+            <div style="{{ rowStyle }}"><span style="flex: 1; font-size: 16px; font-weight: 700;">Show Timeframe</span><span style="font-size: 16px; color: #C4C4C7; font-weight: 800;">›</span></div>
+            <div style="{{ rowStyle }}"><span style="flex: 1; font-size: 16px; font-weight: 700;">Start Date</span><span style="{{ datePillStyle }}">26 Sep 2025</span></div>
+            <div style="{{ rowLastStyle }}"><span style="flex: 1; font-size: 16px; font-weight: 700;">Classic Tab Bar</span><span style="{{ toggleStyle }}"><span style="{{ knobStyle }}"></span></span></div>
+          </div>
+          <div style="font-size: 13px; font-weight: 600; color: #6B6B70; padding: 8px 4px 0; line-height: 1.5;">All Measurements are automatically converted to display in your Preferred Unit.</div>
+          <div style="{{ capStyle }}">Budget exactly one footer caption per group, in plain language, explaining why the group exists. This is doing most of the app's perceived friendliness.</div>
+        </div>
+        <div>
+          <div style="{{ labelStyle }}">Borderless data table</div>
+          <div style="border: 1.5px solid #1A1A1C; border-radius: 16px; overflow: hidden;">
+            <sc-for list="{{ sessions }}" as="s" hint-placeholder-count="4">
+              <div style="{{ s.style }}">
+                <span style="flex: 1; font-size: 15px; font-weight: 700; color: #6B6B70;">{{ s.when }}</span>
+                <span style="font-size: 16px; font-weight: 800;">{{ s.dur }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="{{ capStyle }}">Date left in secondary, value right in ink 800. No chevrons, no icons — the table is for reading, not navigating.</div>
+
+          <div style="{{ labelStyle }}">History row</div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 10px 2px;">
+            <span style="{{ tokenSmStyle }}">🏃</span>
+            <span style="flex: 1; font-size: 16px; font-weight: 800;">Running</span>
+            <span style="font-size: 15px; font-weight: 700; color: #6B6B70;">1 × 5 mi</span>
+            <span style="font-size: 16px; color: #C4C4C7; font-weight: 800;">›</span>
+          </div>
+          <div style="{{ capStyle }}">Naked row — no card, no separator. Used under a timestamp header where the grouping is already obvious.</div>
+        </div>
+      </div>
+    </section>
+
+    <h2 id="inputs" style="{{ h2Style }}">Inputs &amp; controls</h2>
+
+    <section style="{{ sectionStyle }}">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 24px; align-items: start;">
+        <div>
+          <div style="font-size: 13px; font-weight: 700; color: #6B6B70; margin-bottom: 6px; padding-left: 4px;">Name</div>
+          <div style="{{ fieldStyle }}">Required</div>
+          <div style="height: 14px;"></div>
+          <div style="{{ insetGroupStyle }}">
+            <div style="{{ rowLastStyle }}"><span style="flex: 1; font-size: 16px; font-weight: 700;">Color</span><span style="{{ colorWellStyle }}"></span></div>
+          </div>
+          <div style="{{ capStyle }}">Only the required field is marked, and it is marked by its placeholder. No asterisks, no validation-on-blur, no error states — ✓ is simply unavailable until it is filled.</div>
+        </div>
+
+        <div>
+          <div style="{{ labelStyle }}">Stepper + live rule preview</div>
+          <div style="{{ insetGroupStyle }}">
+            <div style="padding: 14px 16px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 16px; font-weight: 700; flex: 1;">Tallies</span>
+                <span style="font-size: 16px; font-weight: 800; min-width: 24px; text-align: right;">{{ tally }}</span>
+                <span style="display: flex; border: 1.5px solid #1A1A1C; border-radius: 10px; overflow: hidden;">
+                  <button onClick="{{ dec }}" style="{{ stepBtnStyle }}">−</button>
+                  <span style="width: 1.5px; background: #1A1A1C;"></span>
+                  <button onClick="{{ inc }}" style="{{ stepBtnStyle }}">+</button>
+                </span>
+              </div>
+              <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
+                <sc-for list="{{ quickSteps }}" as="q" hint-placeholder-count="4">
+                  <button onClick="{{ q.apply }}" style="{{ q.style }}">{{ q.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+          <div style="height: 14px;"></div>
+          <div style="{{ previewCardStyle }}">
+            <div style="{{ goalHeadlineStyle }}">🏆 {{ tally }} / week</div>
+            <div style="font-size: 13px; font-weight: 600; color: #6B6B70; margin-top: 4px;">{{ goalSentence }}</div>
+          </div>
+          <div style="{{ capStyle }}">Render every configured rule back as a sentence while it is being configured. The highest-value pattern in the system.</div>
+        </div>
+
+        <div>
+          <div style="{{ labelStyle }}">Progressive disclosure</div>
+          <button onClick="{{ toggleMore }}" style="{{ moreRowStyle }}">
+            <span style="font-size: 16px; font-weight: 700; flex: 1; text-align: left;">More Options</span>
+            <span style="{{ morePlusStyle }}">+</span>
+          </button>
+          <div style="{{ moreBodyStyle }}">
+            <div style="overflow: hidden; padding: 2px 6px 6px 0;">
+              <div style="{{ insetGroupStyle }}">
+                <sc-for list="{{ moreRows }}" as="r" hint-placeholder-count="3">
+                  <div style="{{ r.style }}">
+                    <span style="flex: 1; font-size: 16px; font-weight: 700;">{{ r.label }}</span>
+                    <span style="font-size: 15px; font-weight: 700; color: #6B6B70;">{{ r.value }}</span>
+                    <span style="font-size: 12px; color: #6B6B70; padding-left: 8px;">⌃⌄</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+          <div style="{{ capStyle }}">Five rows visible, the entire rest of the object model behind one +. Motion spec in §Motion 03.</div>
+        </div>
+      </div>
+    </section>
+
+    <h2 id="nav" style="{{ h2Style }}">Navigation &amp; time</h2>
+
+    <section style="{{ sectionStyle }}">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px;">
+        <div>
+          <div style="{{ labelStyle }}">Floating pill tab bar — tap a tab</div>
+          <div style="{{ tabBarStyle }}">
+            <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+              <button onClick="{{ t.pick }}" style="{{ t.style }}">
+                <span style="font-size: 16px;">{{ t.icon }}</span>
+                <span style="{{ t.labelStyle }}">{{ t.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <div style="{{ capStyle }}">Detached: 12px inset each side, 20px off the home indicator, content scrolls underneath. Only the active tab carries a label, and it is the only filled shape in the system.</div>
+        </div>
+        <div>
+          <div style="{{ labelStyle }}">Week strip</div>
+          <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-width: 360px;">
+            <sc-for list="{{ week }}" as="d" hint-placeholder-count="7">
+              <div style="{{ d.style }}">
+                <div style="font-size: 12px; font-weight: 700; color: #6B6B70;">{{ d.dow }}</div>
+                <div style="{{ d.markStyle }}">{{ d.mark }}</div>
+                <div style="{{ d.numStyle }}">{{ d.num }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="{{ capStyle }}">Three stacked rows: day letter, state glyph, date. Today is marked with a 2px ink underline, never a filled circle. Glyphs: ✓ complete · hollow hexagon planned · dotted circle out of range.</div>
+        </div>
+      </div>
+    </section>
+
+    <h2 id="motion" style="{{ h2Style }}">Motion</h2>
+
+    <section style="{{ sectionStyle }}">
+      <h3 style="{{ h3Style }}">Motion tokens</h3>
+      <p style="{{ leadStyle }}">Five curves you are not allowed to extend. Overshoot is the house style, but only on the two curves that earn it — and never on anything the user is reading while it moves.</p>
+      <div style="border: 1.5px solid #E6E6EA; border-radius: 16px; overflow: hidden;">
+        <sc-for list="{{ motionTokens }}" as="m" hint-placeholder-count="5">
+          <div style="display: flex; align-items: center; padding: 13px 16px; border-bottom: 1.5px solid #E6E6EA; gap: 16px; flex-wrap: wrap;">
+            <span style="width: 90px; flex-shrink: 0; font-size: 15px; font-weight: 800;">{{ m.name }}</span>
+            <span style="width: 200px; flex-shrink: 0; font-size: 12px; color: #6B6B70; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">{{ m.compose }}</span>
+            <span style="flex: 1; min-width: 150px; font-size: 13px; color: #6B6B70; font-weight: 600;">{{ m.use }}</span>
+            <span style="width: 80px; flex-shrink: 0; display: flex; justify-content: flex-end;"><span style="{{ m.dotStyle }}"></span></span>
+          </div>
+        </sc-for>
+      </div>
+      <button onClick="{{ replayTokens }}" style="{{ btnDarkStyle }}">Play all five</button>
+    </section>
+
+    <sc-for list="{{ moments }}" as="m" hint-placeholder-count="7">
+      <section style="{{ sectionStyle }}">
+        <div style="display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 6px;">
+          <span style="font-size: 13px; color: #6B6B70; font-weight: 800; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">{{ m.num }}</span>
+          <h3 style="font-size: 26px; font-weight: 900; letter-spacing: -0.025em; margin: 0;">{{ m.title }}</h3>
+        </div>
+        <p style="{{ leadStyle }}">{{ m.blurb }}</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; align-items: start;">
+          <div style="background: #FAFAFB; border: 1.5px solid #E6E6EA; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; min-height: 230px; justify-content: center;">
+            {{ m.demo }}
+            <button onClick="{{ m.play }}" style="{{ btnSmallStyle }}">{{ m.playLabel }}</button>
+          </div>
+          <div>
+            <div style="{{ labelStyle }}">Spec</div>
+            <sc-for list="{{ m.spec }}" as="row" hint-placeholder-count="4">
+              <div style="display: flex; gap: 12px; padding: 9px 0; border-bottom: 1.5px solid #E6E6EA; flex-wrap: wrap;">
+                <span style="font-size: 13px; font-weight: 800; width: 100px; flex-shrink: 0;">{{ row.k }}</span>
+                <span style="font-size: 13px; color: #6B6B70; font-weight: 600; flex: 1; min-width: 160px; line-height: 1.5;">{{ row.v }}</span>
+              </div>
+            </sc-for>
+            <sc-if value="{{ showCode }}" hint-placeholder-val="{{ true }}">
+              <pre style="margin: 18px 0 0; background: #0B0B0C; color: #E6E6EA; border-radius: 12px; padding: 16px; font-size: 12px; line-height: 1.6; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow-x: auto; white-space: pre;">{{ m.code }}</pre>
+            </sc-if>
+          </div>
+        </div>
+      </section>
+    </sc-for>
+
+    <section style="{{ sectionStyle }}">
+      <h3 style="{{ h3Style }}">Porting checklist</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 0 32px;">
+        <sc-for list="{{ checklist }}" as="c" hint-placeholder-count="14">
+          <div style="display: flex; gap: 12px; padding: 11px 0; border-bottom: 1.5px solid #E6E6EA; align-items: flex-start;">
+            <span style="width: 16px; height: 16px; border: 1.5px solid #1A1A1C; border-radius: 4px; flex-shrink: 0; margin-top: 3px;"></span>
+            <span style="font-size: 15px; font-weight: 600; line-height: 1.45; text-wrap: pretty;">{{ c }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;systemName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Sundial&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#C2A24C&quot;,&quot;options&quot;:[&quot;#C2A24C&quot;,&quot;#7AB648&quot;,&quot;#4C8DC2&quot;,&quot;#C24C7A&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;showCode&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+const SWATCHES = ['#C2A24C', '#7AB648', '#4C8DC2', '#C24C7A', '#7A4CC2', '#C2704C'];
+const INK = '#1A1A1C';
+const STAT = '#9AA3E0';
+const STAT_WASH = '#C9CEF0';
+
+function rgba(hex, a) {
+  const h = (hex || '#000').replace('#', '');
+  const n = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h, 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+}
+function mixWhite(hex, amt) {
+  const h = (hex || '#000').replace('#', '');
+  const n = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h, 16);
+  const f = v => Math.round(v + (255 - v) * amt);
+  return `rgb(${f((n >> 16) & 255)}, ${f((n >> 8) & 255)}, ${f(n & 255)})`;
+}
+
+class Component extends DCLogic {
+  state = { accent: null, tally: 7, tab: 1, pressed: false, more: false, running: false, pulse: 0, sheet: 0, pushed: false, tabDemo: 0, cardDemo: false, stat: 1 };
+
+  componentWillUnmount() { (this._t || []).forEach(clearTimeout); }
+  later(fn, ms) { (this._t = this._t || []).push(setTimeout(fn, ms)); }
+  accent() { return this.state.accent || this.props.accent || '#C2A24C'; }
+  shadowOf(hex) { return mixWhite(hex, 0.48); }
+
+  hard(color, off) {
+    const d = off === undefined ? 3 : off;
+    return `${d}px ${d}px 0 0 ${color}, ${d}px ${d}px 0 1.5px ${INK}`;
+  }
+
+  arc(label, radius, color) {
+    const s = (label.toUpperCase() + '  •  ').repeat(3).split('');
+    const step = 360 / s.length;
+    return s.map((ch, i) => ({
+      ch: ch === ' ' ? '\u00A0' : ch,
+      style: {
+        position: 'absolute', left: '50%', top: '50%', width: 0, height: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: '11px', fontWeight: 800, letterSpacing: '0.08em', color,
+        transform: `rotate(${i * step}deg) translateY(-${radius}px)`,
+      },
+    }));
+  }
+
+  renderVals() {
+    const a = this.accent();
+    const sh = this.shadowOf(a);
+    const s = this.state;
+    const R = React.createElement;
+
+    const card = (accentHex, extra) => Object.assign({
+      display: 'flex', alignItems: 'center', gap: '12px', background: '#FFFFFF',
+      border: `1.5px solid ${INK}`, borderRadius: '16px', padding: '14px 16px',
+      boxShadow: this.hard(this.shadowOf(accentHex)), width: '100%',
+      transition: 'box-shadow 400ms ease, border-color 400ms ease',
+    }, extra || {});
+
+    const token = (accentHex, size) => ({
+      width: `${size}px`, height: `${size}px`, borderRadius: '999px',
+      background: rgba(accentHex, 0.22), border: `1.5px solid ${INK}`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: `${Math.round(size * 0.48)}px`, flexShrink: 0,
+      transition: 'background 400ms ease',
+    });
+
+    const rowBase = (last) => ({
+      display: 'flex', alignItems: 'center', padding: '13px 16px', minHeight: '48px',
+      borderBottom: last ? 'none' : `1.5px solid #E6E6EA`,
+    });
+
+    const chipBtn = {
+      border: `1.5px solid ${INK}`, background: '#FFFFFF', borderRadius: '999px',
+      padding: '7px 15px', fontSize: '14px', fontWeight: 800, cursor: 'pointer',
+      fontFamily: 'inherit', color: '#0B0B0C',
+      transition: 'transform 180ms cubic-bezier(.34,1.56,.64,1), background 160ms ease',
+    };
+
+    const btnBase = {
+      background: '#FFFFFF', border: `1.5px solid ${INK}`, cursor: 'pointer',
+      fontFamily: 'inherit', color: '#0B0B0C', boxShadow: this.hard(sh),
+      transition: 'box-shadow 160ms ease, transform 160ms ease',
+    };
+
+    const moments = [
+      {
+        num: '01', title: 'Press — the object drops onto its shadow', playLabel: 'Press it',
+        blurb: 'The defining interaction of an outline-and-offset system. Nothing scales, nothing fades: the shape translates 3px down-right and its shadow closes to zero, so the button looks physically pushed flat against the page. Every pressable object in the system does this — cards, buttons, chips, tab items.',
+        demo: this.pressDemoEl(),
+        play: () => this.flashCard(),
+        spec: [
+          { k: 'Down', v: 'translate(3px, 3px) + shadow offset 3 → 0, both over 90ms ease-out. They must share a duration or the shape appears to slide out from under itself' },
+          { k: 'Up', v: 'spring pop · damping .55, stiffness 400. The offset overshoots to ~4px before settling at 3' },
+          { k: 'Scale', v: 'none. Scaling an outlined shape thickens the outline and breaks the illusion' },
+          { k: '300ms held', v: 'outline 1.5px → 2.5px — the card acknowledging the long press before the sheet opens' },
+          { k: 'Haptic', v: 'light on down, none on up. The drop is the feedback' },
+        ],
+        code: 'val pressed by src.collectIsPressedAsState()\nval drop by animateDpAsState(\n  if (pressed) 3.dp else 0.dp,\n  if (pressed) tween(90)\n  else spring(dampingRatio = 0.55f, stiffness = 400f)\n)\n\nBox(\n  Modifier\n    .offset(x = drop, y = drop)\n    .hardShadow(\n      offset = (3.dp - drop),\n      color = accent.shadow,\n      outline = INK\n    )\n    .clickable(src, indication = null) { onClick() }\n)',
+      },
+      {
+        num: '02', title: 'Tab pill morph', playLabel: 'Cycle tabs',
+        blurb: 'The active tab is the only filled shape in the system, so switching is one continuous width animation rather than a crossfade — the black pill grows into the new tab while the outgoing label collapses to nothing.',
+        demo: this.tabDemoEl(),
+        play: () => this.setState(st => ({ tabDemo: (st.tabDemo + 1) % 4 })),
+        spec: [
+          { k: 'Pill width', v: 'spring pop · damping .62, stiffness 420 — one visible ~4px overshoot' },
+          { k: 'Label', v: 'maxWidth 0 → auto on the same spring; opacity over the first 60% only, so text never reads mid-stretch' },
+          { k: 'Fill', v: 'transparent → ink, 180ms snap. Colour beats geometry so the target feels chosen instantly' },
+          { k: 'Icon', v: 'no scale, no bounce — it is the anchor the pill grows around' },
+          { k: 'Bar itself', v: 'never moves, never resizes. Width is fixed by the widest label' },
+        ],
+        code: 'Row(\n  Modifier\n    .clip(shapes.pill)\n    .background(if (active) colors.ink else Color.Transparent)\n    .animateContentSize(spring(0.62f, 420f))\n)\n\nAnimatedVisibility(\n  visible = active,\n  enter = fadeIn(tween(140)) +\n          expandHorizontally(spring(0.62f, 420f)),\n  exit  = fadeOut(tween(90)) + shrinkHorizontally(tween(180))\n) { Text(item.label) }',
+      },
+      {
+        num: '03', title: 'Arc CTA — idle, press, running', playLabel: 'Toggle session',
+        blurb: 'The ring never stops turning; its speed is the state. Idle is slow enough that you only notice it if you look. Starting a session accelerates the ring, hands it the accent, and ripples a halo out from under the button.',
+        demo: this.arcDemoEl(),
+        play: () => this.setState(st => ({ running: !st.running })),
+        spec: [
+          { k: 'Idle ring', v: '360° every 28s, linear, forever. Ring type in text-secondary' },
+          { k: 'Start', v: 'period 28s → 8s interpolated over 600ms; ring colour → accent; halo ripples every 1.6s' },
+          { k: 'Glyph', v: '▶ → ⏸ crossfade 120ms with a 25° rotation, so the swap reads as one object turning' },
+          { k: 'Press', v: 'the drop from §01 — the arc button is not exempt' },
+          { k: 'Haptic', v: 'medium impact on start, light on stop' },
+        ],
+        code: 'val spin = rememberInfiniteTransition()\nval period by animateIntAsState(\n  if (running) 8_000 else 28_000, tween(600)\n)\nval angle by spin.animateFloat(\n  0f, 360f,\n  infiniteRepeatable(tween(period, easing = LinearEasing))\n)\nBox(Modifier.graphicsLayer { rotationZ = angle }) { ArcLabel() }',
+      },
+      {
+        num: '04', title: 'More Options expand', playLabel: 'Toggle',
+        blurb: 'The whole depth of the object model sits behind one plus, so opening has to feel like the form grew rather than like a screen appeared. Rows stagger in; the glyph rotates rather than swaps.',
+        demo: this.moreDemoEl(),
+        play: () => this.setState(st => ({ more: !st.more })),
+        spec: [
+          { k: 'Height', v: '0 → content on spring pop · damping .70, stiffness 340' },
+          { k: 'Glyph', v: '+ rotates 45° into × over 260ms on the same spring. Never two glyphs cross-fading' },
+          { k: 'Rows', v: 'stagger 28ms each, translateY 8px → 0 with fade. Cap at 6 rows' },
+          { k: 'Collapse', v: 'no stagger, no overshoot, 200ms ease-in. Closing is housekeeping, not delight' },
+          { k: 'Shadow', v: 'the group\u2019s hard shadow is drawn from the first frame — it must not fade in, or the card looks like it is inflating' },
+        ],
+        code: 'Column(Modifier.animateContentSize(spring(0.70f, 340f))) {\n  MoreOptionsRow(expanded, onToggle)\n  if (expanded) rows.forEachIndexed { i, row ->\n    AnimatedVisibility(\n      visibleState = remember { MutableTransitionState(false) }\n        .apply { targetState = true },\n      enter = fadeIn(tween(220, delayMillis = i * 28)) +\n              slideInVertically(tween(220, delayMillis = i * 28)) { 8 }\n    ) { InsetRow(row.label, value = row.value) }\n  }\n}',
+      },
+      {
+        num: '05', title: 'Sheet present + ✓ commit', playLabel: 'Open sheet',
+        blurb: 'Every create and edit surface is a sheet, and commit is always the green check. The commit bounce is the most emotional moment in the app — the only animation allowed past 500ms.',
+        demo: this.sheetDemoEl(),
+        play: () => this.openSheet(),
+        spec: [
+          { k: 'Present', v: 'translateY 100% → 0 on sheet curve, 380ms. Scrim fades to 18% over the first 240ms' },
+          { k: 'Behind', v: 'parent scales to 0.96 and clips to radius 16 — the depth cue the flat shadows cannot provide' },
+          { k: '✓ press', v: 'scale 1 → 0.8 → 1.25 → 1 on spring commit, 520ms total' },
+          { k: '✓ burst', v: 'confirm-green ring expands 1 → 2.2× and fades over 420ms, starting at the 1.25 peak' },
+          { k: 'Dismiss', v: 'sheet exits down 300ms ease-in, 120ms after the burst so the confirmation lands first' },
+          { k: '✕ cancel', v: 'no bounce, no burst, 240ms straight down. Cancelling is never celebrated' },
+        ],
+        code: 'val t = remember { Animatable(1f) }\nLaunchedEffect(committed) {\n  if (committed) {\n    t.animateTo(0.8f, tween(90))\n    t.animateTo(1f, spring(dampingRatio = 0.42f, stiffness = 360f))\n  }\n}\nBox(Modifier.graphicsLayer { scaleX = t.value; scaleY = t.value })',
+      },
+      {
+        num: '06', title: 'Screen push with a shared arc', playLabel: 'Push detail',
+        blurb: 'The detail screen repeats the list screen\u2019s arc CTA, so the tap target must never move. Everything else slides; the arc stays put and the user keeps their finger where it was.',
+        demo: this.pushDemoEl(),
+        play: () => this.setState(st => ({ pushed: !st.pushed })),
+        spec: [
+          { k: 'Incoming', v: 'translateX 100% → 0, sheet curve, 340ms' },
+          { k: 'Outgoing', v: 'translateX 0 → −28% with fade to 0.4 — parallax, so the stack reads as depth' },
+          { k: 'Shared arc', v: 'does not translate. Scales 1 → 1.15 over the same 340ms as the detail screen claims it' },
+          { k: 'Heatmap', v: 'cells restagger at 14ms each as the grid goes full-width — the only stagger that survives a navigation' },
+          { k: 'Back', v: 'exact inverse at 300ms; edge-swipe drives the same transition interactively' },
+        ],
+        code: 'SharedTransitionLayout {\n  AnimatedContent(\n    targetState = route,\n    transitionSpec = {\n      slideInHorizontally(tween(340)) { it } togetherWith\n      slideOutHorizontally(tween(340)) { -it * 28 / 100 } +\n        fadeOut(tween(340), targetAlpha = 0.4f)\n    }\n  ) { screen ->\n    ArcTextButton(\n      modifier = Modifier.sharedElement(\n        rememberSharedContentState(key = "arc-$activityId"),\n        animatedVisibilityScope = this@AnimatedContent,\n      ),\n      label = screen.verb, glyph = screen.glyph, onClick = {}\n    )\n  }\n}',
+      },
+      {
+        num: '07', title: 'Accent change propagating', playLabel: 'Next colour',
+        blurb: 'When the user changes an object\u2019s colour, every derived surface has to move together or the system\u2019s one rule stops being legible. Shadow, token, metric, heatmap and day markers all cross-fade on one shared 400ms tween — no stagger, no sequencing.',
+        demo: this.accentDemoEl(),
+        play: () => this.cycleAccent(),
+        spec: [
+          { k: 'Everything', v: 'single 400ms tween on colour only. Geometry never moves during a recolour' },
+          { k: 'Ordering', v: 'no stagger. A staggered recolour reads as a bug, not as choreography' },
+          { k: 'Picker', v: 'the swatch the user is dragging updates live at 60fps; the rest of the screen follows it with no delay' },
+          { k: 'Shadow', v: 'interpolate in the derived (lightened) space, not from the raw accent — otherwise it darkens through the midpoint' },
+          { k: 'Heatmap', v: 'each cell keeps its alpha; only the hue interpolates' },
+        ],
+        code: 'val accent by animateColorAsState(object.accent, tween(400))\nval derived = remember(accent) { accentColorsOf(accent, colors) }\n\n// every consumer reads `derived`, never `object.accent`\nCard(shadow = derived.shadow, outline = INK) {\n  SymbolToken(tint = derived.wash)\n  Text(metric, color = derived.text)\n}',
+      },
+    ];
+
+    return {
+      systemName: this.props.systemName || 'Sundial',
+      showCode: this.props.showCode !== false,
+      accent: a,
+
+      h2Style: { fontSize: '12px', fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase', color: '#6B6B70', margin: '52px 0 16px', paddingLeft: '4px' },
+      sectionStyle: { background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '20px', boxShadow: `4px 4px 0 0 #F0F0F3, 4px 4px 0 1.5px ${INK}`, padding: '32px', marginBottom: '22px' },
+      heroCardStyle: { background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '20px', boxShadow: this.hard(sh, 5), padding: '32px', marginBottom: '22px', transition: 'box-shadow 400ms ease' },
+      h3Style: { fontSize: '26px', fontWeight: 900, letterSpacing: '-0.025em', margin: '0 0 6px' },
+      leadStyle: { fontSize: '15px', color: '#6B6B70', fontWeight: 600, margin: '0 0 26px', maxWidth: '680px', lineHeight: 1.55, textWrap: 'pretty' },
+      labelStyle: { fontSize: '12px', fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#6B6B70', margin: '22px 0 10px' },
+      capStyle: { fontSize: '13px', fontWeight: 700, color: '#0B0B0C', marginTop: '12px', lineHeight: 1.5, textWrap: 'pretty' },
+      calloutStyle: { marginTop: '22px', background: '#F4F4F6', borderRadius: '12px', padding: '14px 16px', fontSize: '13px', fontWeight: 600, color: '#0B0B0C', lineHeight: 1.55, textWrap: 'pretty' },
+      specimenStyle: { border: '1.5px solid #E6E6EA', borderRadius: '16px', padding: '22px 18px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px', minHeight: '150px' },
+
+      swatches: SWATCHES.map(hex => ({
+        hex, pick: () => this.setState({ accent: hex }),
+        style: {
+          width: '34px', height: '34px', borderRadius: '999px', background: hex, cursor: 'pointer', padding: 0,
+          border: `1.5px solid ${INK}`, boxShadow: hex === a ? `3px 3px 0 0 ${this.shadowOf(hex)}, 3px 3px 0 1.5px ${INK}` : 'none',
+          transform: hex === a ? 'translate(0,0)' : 'translate(3px,3px)',
+          transition: 'transform 300ms cubic-bezier(.34,1.56,.64,1), box-shadow 200ms ease',
+        },
+      })),
+
+      objCardStyle: card(a, { maxWidth: '460px' }),
+      objCardAltStyle: card('#7AB648'),
+      objCardActionStyle: card(a),
+      tokenStyle: token(a, 40),
+      tokenAltStyle: token('#7AB648', 40),
+      tokenSmStyle: token(a, 32),
+      metricStyle: { display: 'block', fontSize: '17px', fontWeight: 800, color: a, transition: 'color 400ms ease' },
+      playGlyphStyle: { width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', color: INK, filter: `drop-shadow(2px 2px 0 ${sh})` },
+
+      chrome: [
+        ['canvas', '#FFFFFF'], ['surface-sunken', '#F4F4F6'], ['ink', '#0B0B0C'], ['outline', INK],
+        ['text-secondary', '#6B6B70'], ['text-tertiary', '#C4C4C7'], ['separator', '#E6E6EA'], ['tab-active', '#0B0B0C'],
+      ].map(([name, hex]) => ({ name, hex, swatchStyle: { height: '52px', background: hex, borderBottom: '1.5px solid #E6E6EA' } })),
+
+      semantics: [
+        ['intent-more', '#34C759', 'do more · toggles on'],
+        ['intent-less', '#FF9F0A', 'do less'],
+        ['destructive', '#FF3B30', 'cancel · delete'],
+        ['confirm', '#34C759', 'commit ✓'],
+        ['stat', STAT, 'display numerals, unselected chips'],
+        ['stat-wash', STAT_WASH, 'the offset behind a display numeral'],
+      ].map(([name, hex, use]) => ({ name, use, dotStyle: { width: '24px', height: '24px', borderRadius: '999px', background: hex, border: `1.5px solid ${INK}`, display: 'inline-block' } })),
+
+      derivation: [
+        ['shadow', 'accent + 48% white', 'the 3px hard offset under every object', 'shadow'],
+        ['line', 'accent @ 100%', 'day markers, inline glyph tint', 1],
+        ['text', 'accent @ 100%', 'metric values, goal preview', 1],
+        ['wash', 'accent @ 22%', 'symbol token fill', 0.22],
+        ['fill-max', 'accent @ 100%', 'heatmap cell at max', 1],
+        ['fill-n', 'accent @ (0.15 + 0.85 × v)', 'heatmap cell, v normalized', 0.5],
+        ['empty', '#E9E9EC', 'heatmap cell with no data', null],
+      ].map(([name, formula, use, alpha]) => ({
+        name, formula, use,
+        chipStyle: {
+          width: '42px', height: '24px', borderRadius: '6px', flexShrink: 0, border: `1.5px solid ${INK}`,
+          background: alpha === 'shadow' ? sh : (alpha === null ? '#E9E9EC' : rgba(a, alpha)),
+          transition: 'background 400ms ease',
+        },
+      })),
+
+      typeScale: [
+        ['display-stat', '56 / 900', '8h 13m', 56, 900, -0.03, 'the one number per screen'],
+        ['title-screen', '38 / 900', 'Activities', 38, 900, -0.035, 'screen titles'],
+        ['title-section', '24 / 900', 'Recent Sessions', 24, 900, -0.02, 'in-page headers'],
+        ['title-modal', '30 / 900', 'Habit Arc', 30, 900, -0.03, 'sheet titles'],
+        ['item-title', '19 / 800', 'Reading', 19, 800, -0.01, 'object name on a card'],
+        ['row-label', '16 / 700', 'Show Progress Bar', 16, 700, 0, 'list rows'],
+        ['metric', '17 / 800', '10h 13m', 17, 800, 0, 'accent-coloured values'],
+        ['caption', '13 / 600', 'this week', 13, 600, 0, 'footers, timeframes'],
+        ['group-header', '13 / 700', 'Measurements', 13, 700, 0, 'sentence case, never upper'],
+        ['arc-micro', '11 / 800 · +.08em', 'START SESSION', 11, 800, 0.08, 'the rotating ring only'],
+      ].map(([name, spec, sample, size, weight, ls, use]) => ({
+        name, spec, sample, use,
+        sampleStyle: {
+          fontSize: `${size}px`, fontWeight: weight, letterSpacing: `${ls}em`, lineHeight: 1.1,
+          color: name === 'metric' ? a : (name === 'caption' || name === 'group-header' || name === 'arc-micro' ? '#6B6B70' : '#0B0B0C'),
+          textTransform: name === 'arc-micro' ? 'uppercase' : 'none',
+          transition: 'color 400ms ease',
+        },
+      })),
+
+      radii: [['field', '10px', '10px'], ['button', '14px', '14px'], ['card', '16px', '16px'], ['pill', '999px', '999px']]
+        .map(([name, value, r]) => ({ name, value, boxStyle: { width: '58px', height: '58px', background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: r, boxShadow: this.hard(sh), transition: 'box-shadow 400ms ease' } })),
+
+      pressDown: () => this.setState({ pressed: true }),
+      pressUp: () => this.setState({ pressed: false }),
+      pressTileStyle: {
+        width: '120px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '14px', fontSize: '15px', fontWeight: 800,
+        cursor: 'pointer', userSelect: 'none',
+        boxShadow: s.pressed ? `0 0 0 0 ${sh}, 0 0 0 0 ${INK}` : this.hard(sh),
+        transform: s.pressed ? 'translate(3px, 3px)' : 'translate(0, 0)',
+        transition: s.pressed ? 'transform 90ms ease-out, box-shadow 90ms ease-out' : 'transform 380ms cubic-bezier(.34,1.56,.64,1), box-shadow 380ms cubic-bezier(.34,1.56,.64,1)',
+      },
+
+      btnPrimaryStyle: Object.assign({}, btnBase, { borderRadius: '14px', padding: '13px 24px', fontSize: '15px', fontWeight: 800, marginTop: '16px' }),
+      btnWideStyle: Object.assign({}, btnBase, { borderRadius: '14px', padding: '13px 20px', fontSize: '15px', fontWeight: 800, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }),
+      btnIconStyle: Object.assign({}, btnBase, { width: '40px', height: '40px', borderRadius: '999px', fontSize: '16px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }),
+      btnCancelStyle: Object.assign({}, btnBase, { width: '40px', height: '40px', borderRadius: '999px', fontSize: '15px', fontWeight: 800, color: '#FF3B30', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }),
+      btnConfirmStyle: Object.assign({}, btnBase, { width: '40px', height: '40px', borderRadius: '999px', fontSize: '15px', fontWeight: 800, color: '#34C759', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }),
+      glyphBtnStyle: Object.assign({}, btnBase, { width: '72px', height: '72px', borderRadius: '999px', fontSize: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }),
+      btnDarkStyle: { marginTop: '18px', border: `1.5px solid ${INK}`, background: '#0B0B0C', color: '#FFFFFF', borderRadius: '999px', padding: '11px 22px', fontSize: '14px', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' },
+      btnSmallStyle: Object.assign({}, chipBtn, { boxShadow: this.hard(sh, 2) }),
+
+      navCardStyle: { background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '16px', boxShadow: this.hard(sh), overflow: 'hidden', transition: 'box-shadow 400ms ease' },
+      navRows: [['◑', 'All Sessions', 0], ['▦', 'Activity Grid', 0], ['📈', 'Trends', 1]]
+        .map(([icon, label, last]) => ({ icon, label, style: Object.assign(rowBase(!!last), { gap: '8px' }) })),
+
+      statChips: [['Days Active', '5 days'], ['Time Spent', '8h 13m'], ['Longest Streak', '5 days']]
+        .map(([label, value], i) => ({
+          label, value, pick: () => this.setState({ stat: i }),
+          style: {
+            background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '14px', padding: '10px 14px', cursor: 'pointer',
+            boxShadow: `3px 3px 0 0 ${STAT_WASH}, 3px 3px 0 1.5px ${INK}`,
+            transform: s.stat === i ? 'translate(0,0)' : 'translate(1px,1px)',
+            transition: 'transform 300ms cubic-bezier(.34,1.56,.64,1)',
+          },
+          valueStyle: { fontSize: '15px', fontWeight: 800, marginTop: '2px', color: s.stat === i ? '#0B0B0C' : STAT },
+        })),
+
+      inspoCards: [['7️⃣', '7 Day Streak Challenge', 'Habit Arc', '#C2A24C'], ['🔥', '30 Day Streak Challenge', 'Habit Arc', '#FF3B30']]
+        .map(([badge, title, sub, hex]) => ({
+          badge, title, sub,
+          style: { width: '150px', background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '16px', padding: '14px', boxShadow: `3px 3px 0 0 ${this.shadowOf(hex)}, 3px 3px 0 1.5px ${INK}` },
+          badgeStyle: { width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '17px', background: rgba(hex, 0.25), border: `1.5px solid ${INK}`, clipPath: 'polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)' },
+        })),
+
+      displayNumStyle: { fontSize: '62px', fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1, color: '#FFFFFF', WebkitTextStroke: `2px ${INK}`, textShadow: `4px 4px 0 ${STAT_WASH}` },
+      displayUnitStyle: { fontSize: '34px', fontWeight: 900, letterSpacing: '-0.02em', lineHeight: 1, color: STAT_WASH, WebkitTextStroke: `1.5px ${INK}` },
+
+      insetGroupStyle: { background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '16px', boxShadow: this.hard(sh), overflow: 'hidden', transition: 'box-shadow 400ms ease' },
+      rowStyle: rowBase(false),
+      rowLastStyle: rowBase(true),
+      datePillStyle: { background: '#F0F0F3', borderRadius: '8px', padding: '6px 12px', fontSize: '14px', fontWeight: 800 },
+      toggleStyle: { width: '46px', height: '28px', borderRadius: '999px', background: '#34C759', border: `1.5px solid ${INK}`, position: 'relative', display: 'inline-block' },
+      knobStyle: { position: 'absolute', top: '1px', left: '20px', width: '22px', height: '22px', borderRadius: '999px', background: '#FFFFFF', border: `1.5px solid ${INK}` },
+      fieldStyle: { background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '12px', padding: '14px 16px', fontSize: '16px', fontWeight: 700, color: '#C4C4C7', boxShadow: this.hard(sh), transition: 'box-shadow 400ms ease' },
+      colorWellStyle: { width: '28px', height: '28px', borderRadius: '999px', border: `1.5px solid ${INK}`, background: `conic-gradient(#FF3B30, #FF9F0A, #34C759, #4C8DC2, #7A4CC2, #FF3B30)` },
+      stepBtnStyle: { border: 'none', background: '#FFFFFF', fontSize: '17px', fontWeight: 800, padding: '8px 18px', cursor: 'pointer', color: '#0B0B0C', fontFamily: 'inherit' },
+      previewCardStyle: { background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '16px', padding: '14px 16px', boxShadow: this.hard(sh), transition: 'box-shadow 400ms ease' },
+      goalHeadlineStyle: { fontSize: '19px', fontWeight: 800, color: a, transition: 'color 400ms ease' },
+      goalSentence: `Achieve this Goal by Running ${s.tally} times per Week.`,
+
+      sessions: [['27/9/25, 4:12 PM', '41m 13s', 0], ['26/9/25, 4:32 PM', '55m 38s', 0], ['25/9/25, 8:00 AM', '1h', 1]]
+        .map(([when, dur, last]) => ({ when, dur, style: rowBase(!!last) })),
+
+      tally: s.tally,
+      inc: () => this.setState(st => ({ tally: st.tally + 1 })),
+      dec: () => this.setState(st => ({ tally: Math.max(0, st.tally - 1) })),
+      quickSteps: [-4, -2, 2, 4].map(n => ({
+        label: n < 0 ? `− ${-n}` : `+ ${n}`,
+        apply: () => this.setState(st => ({ tally: Math.max(0, st.tally + n) })),
+        style: chipBtn,
+      })),
+
+      toggleMore: () => this.setState(st => ({ more: !st.more })),
+      moreRowStyle: { display: 'flex', alignItems: 'center', width: '100%', background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '16px', padding: '15px 16px', cursor: 'pointer', fontFamily: 'inherit', color: '#0B0B0C', boxShadow: this.hard(sh), transition: 'box-shadow 400ms ease' },
+      morePlusStyle: { fontSize: '20px', fontWeight: 800, color: '#6B6B70', lineHeight: 1, display: 'inline-block', transform: s.more ? 'rotate(45deg)' : 'rotate(0deg)', transition: 'transform 300ms cubic-bezier(.34,1.56,.64,1)' },
+      moreBodyStyle: { display: 'grid', gridTemplateRows: s.more ? '1fr' : '0fr', opacity: s.more ? 1 : 0, marginTop: s.more ? '12px' : '0px', transition: 'grid-template-rows 380ms cubic-bezier(.34,1.56,.64,1), opacity 220ms ease, margin-top 380ms ease' },
+      moreRows: [['Recurring Plan', 'None', 0], ['Stacks', 'None', 0], ['Hide Widgets', 'Off', 1]]
+        .map(([label, value, last]) => ({ label, value, style: rowBase(!!last) })),
+
+      tabBarStyle: { display: 'inline-flex', gap: '4px', background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '999px', boxShadow: this.hard('#E9E9EC'), padding: '6px' },
+      tabs: ['☀ My Day', '◑ Activities', '⬡ Arcs', '⚙ Settings'].map((t, i) => {
+        const active = i === s.tab;
+        const [icon, ...rest] = t.split(' ');
+        return {
+          icon, label: rest.join(' '), pick: () => this.setState({ tab: i }),
+          style: {
+            display: 'flex', alignItems: 'center', gap: active ? '8px' : '0px', border: 'none', cursor: 'pointer',
+            background: active ? '#0B0B0C' : 'transparent', borderRadius: '999px',
+            padding: active ? '10px 16px' : '10px 12px', color: active ? '#FFFFFF' : '#6B6B70', fontFamily: 'inherit',
+            transition: 'background 180ms cubic-bezier(.2,0,0,1), padding 420ms cubic-bezier(.34,1.56,.64,1), gap 420ms cubic-bezier(.34,1.56,.64,1)',
+          },
+          labelStyle: { fontSize: '15px', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', maxWidth: active ? '120px' : '0px', opacity: active ? 1 : 0, transition: 'max-width 420ms cubic-bezier(.34,1.56,.64,1), opacity 200ms ease' },
+        };
+      }),
+
+      week: [['S', '○', '21', 0], ['M', '✓', '22', 0], ['T', '✓', '23', 0], ['W', '✓', '24', 0], ['T', '✓', '25', 0], ['F', '✓', '26', 1], ['S', '⬡', '27', 0]]
+        .map(([dow, mark, num, today]) => ({
+          dow, mark, num,
+          style: { textAlign: 'center', padding: '6px 0', borderBottom: today ? `2px solid ${INK}` : '2px solid transparent' },
+          markStyle: { fontSize: '15px', fontWeight: 800, margin: '4px 0', color: mark === '✓' ? a : (mark === '⬡' ? '#C4C4C7' : '#E6E6EA'), transition: 'color 400ms ease' },
+          numStyle: { fontSize: '13px', fontWeight: today ? 800 : 700, color: today ? '#0B0B0C' : '#6B6B70' },
+        })),
+
+      motionTokens: [
+        ['snap', 'tween(180, FastOutSlowIn)', 'fills, toggles, colour', '180ms cubic-bezier(.2,0,0,1)'],
+        ['pop', 'spring(.62, 420f)', 'pill morph, expand, press release', '420ms cubic-bezier(.34,1.56,.64,1)'],
+        ['commit', 'spring(.42, 360f)', '✓ only. Earned celebration', '520ms cubic-bezier(.22,1.6,.36,1)'],
+        ['sheet', 'tween(380, EaseOutQuint)', 'sheets, screen pushes', '380ms cubic-bezier(.16,1,.3,1)'],
+        ['settle', 'tween(220) + 28ms stagger', 'lists, heatmap cascade', '700ms cubic-bezier(.16,1,.3,1)'],
+      ].map(([name, compose, use, trans], i) => ({
+        name, compose, use,
+        dotStyle: {
+          width: '22px', height: '22px', borderRadius: '6px', background: '#FFFFFF', border: `1.5px solid ${INK}`, display: 'block',
+          boxShadow: `2px 2px 0 0 ${sh}, 2px 2px 0 1.5px ${INK}`,
+          transform: s.pulse ? 'translateX(44px)' : 'translateX(0)',
+          transition: `transform ${trans} ${i * 40}ms`,
+        },
+      })),
+      replayTokens: () => { this.setState({ pulse: 1 }); this.later(() => this.setState({ pulse: 0 }), 950); },
+
+      moments,
+
+      checklist: [
+        'Strip the brand colour out of the chrome. Colour belongs to user objects.',
+        'One accent slot per object; derive shadow / wash / text / fill-n by formula.',
+        'Outline 1.5px near-black on every object. No exceptions, no hairline greys.',
+        'Hard 3px down-right offset at 0 blur. Never a blurred shadow, never another direction.',
+        'Four radii: field 10, button 14, card 16, pill 999.',
+        'Rounded geometric type, 700–900 for anything structural.',
+        'Exactly one display stat per screen, on canvas, never on a card.',
+        'Section headers sentence case; one plain-language footer per group.',
+        'Each object\u2019s primary action sits directly beneath it — no global FAB.',
+        'Ask what kind of thing this is before any other field.',
+        'Render every configured rule back as a live sentence.',
+        'Hide everything non-essential behind one More Options +.',
+        'Commit with ✓, cancel with ✕, never the word Save.',
+        'Press = drop onto the shadow. Five motion curves, no sixth.',
+      ],
+    };
+  }
+
+  // --- demos ---------------------------------------------------------------
+
+  flashCard() { this.setState({ cardDemo: true }); this.later(() => this.setState({ cardDemo: false }), 260); }
+  cycleAccent() {
+    const i = SWATCHES.indexOf(this.accent());
+    this.setState({ accent: SWATCHES[(i + 1) % SWATCHES.length] });
+  }
+
+  pressDemoEl() {
+    const R = React.createElement;
+    const a = this.accent();
+    const sh = this.shadowOf(a);
+    const down = this.state.cardDemo;
+    return R('div', {
+      onMouseDown: () => this.setState({ cardDemo: true }),
+      onMouseUp: () => this.setState({ cardDemo: false }),
+      onMouseLeave: () => this.setState({ cardDemo: false }),
+      style: {
+        display: 'flex', alignItems: 'center', gap: '12px', background: '#FFFFFF',
+        border: `1.5px solid ${INK}`, borderRadius: '16px', padding: '14px 16px', width: '100%', maxWidth: '290px',
+        cursor: 'pointer', userSelect: 'none',
+        boxShadow: down ? `0 0 0 0 ${sh}, 0 0 0 0 ${INK}` : this.hard(sh),
+        transform: down ? 'translate(3px,3px)' : 'translate(0,0)',
+        transition: down ? 'transform 90ms ease-out, box-shadow 90ms ease-out' : 'transform 380ms cubic-bezier(.34,1.56,.64,1), box-shadow 380ms cubic-bezier(.34,1.56,.64,1)',
+      },
+    }, [
+      R('span', { key: 't', style: { width: '36px', height: '36px', borderRadius: '999px', background: rgba(a, 0.22), border: `1.5px solid ${INK}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' } }, '📚'),
+      R('span', { key: 'n', style: { flex: 1, fontSize: '17px', fontWeight: 800 } }, 'Reading'),
+      R('span', { key: 'm', style: { fontSize: '15px', fontWeight: 800, color: a } }, '9h 13m'),
+    ]);
+  }
+
+  tabDemoEl() {
+    const R = React.createElement;
+    const items = [['☀', 'My Day'], ['◑', 'Activities'], ['⬡', 'Arcs'], ['⚙', 'Settings']];
+    return R('div', {
+      style: { display: 'flex', gap: '4px', background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '999px', boxShadow: `3px 3px 0 0 #E9E9EC, 3px 3px 0 1.5px ${INK}`, padding: '6px' },
+    }, items.map(([icon, label], i) => {
+      const active = i === this.state.tabDemo;
+      return R('div', {
+        key: i, onClick: () => this.setState({ tabDemo: i }),
+        style: {
+          display: 'flex', alignItems: 'center', gap: active ? '8px' : '0px', cursor: 'pointer',
+          background: active ? '#0B0B0C' : 'transparent', borderRadius: '999px',
+          padding: active ? '9px 14px' : '9px 11px', color: active ? '#FFFFFF' : '#6B6B70',
+          transition: 'background 180ms cubic-bezier(.2,0,0,1), padding 420ms cubic-bezier(.34,1.56,.64,1), gap 420ms cubic-bezier(.34,1.56,.64,1)',
+        },
+      }, [
+        R('span', { key: 'i', style: { fontSize: '15px' } }, icon),
+        R('span', { key: 'l', style: { fontSize: '14px', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', maxWidth: active ? '110px' : '0px', opacity: active ? 1 : 0, transition: 'max-width 420ms cubic-bezier(.34,1.56,.64,1), opacity 200ms ease' } }, label),
+      ]);
+    }));
+  }
+
+  arcDemoEl() {
+    const R = React.createElement;
+    const a = this.accent();
+    const sh = this.shadowOf(a);
+    const running = this.state.running;
+    return R('div', { style: { position: 'relative', width: '150px', height: '150px' } }, [
+      R('div', { key: 'ring', style: { position: 'absolute', inset: 0, animation: `sd-spin ${running ? 8 : 28}s linear infinite` } },
+        this.arc('Start Session', 62, running ? a : '#6B6B70').map((c, i) => R('span', { key: i, style: c.style }, c.ch))),
+      R('div', { key: 'halo', style: { position: 'absolute', left: '50%', top: '50%', width: '72px', height: '72px', marginLeft: '-36px', marginTop: '-36px', borderRadius: '999px', background: rgba(a, 0.45), animation: running ? 'sd-halo 1.6s ease-out infinite' : 'none', opacity: running ? 1 : 0 } }),
+      R('div', {
+        key: 'btn', onClick: () => this.setState(st => ({ running: !st.running })),
+        style: {
+          position: 'absolute', left: '50%', top: '50%', width: '72px', height: '72px', marginLeft: '-36px', marginTop: '-36px',
+          borderRadius: '999px', background: '#FFFFFF', border: `1.5px solid ${INK}`, cursor: 'pointer',
+          boxShadow: `3px 3px 0 0 ${sh}, 3px 3px 0 1.5px ${INK}`, fontSize: '26px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'box-shadow 400ms ease',
+        },
+      }, running ? '⏸' : '▶'),
+    ]);
+  }
+
+  moreDemoEl() {
+    const R = React.createElement;
+    const a = this.accent();
+    const sh = this.shadowOf(a);
+    const open = this.state.more;
+    const rows = [['Recurring Plan', 'None'], ['Stacks', 'None'], ['Hide Widgets', 'Off']];
+    return R('div', { style: { width: '100%', maxWidth: '290px' } }, [
+      R('div', {
+        key: 'row', onClick: () => this.setState({ more: !open }),
+        style: { display: 'flex', alignItems: 'center', background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '16px', padding: '14px 16px', cursor: 'pointer', boxShadow: `3px 3px 0 0 ${sh}, 3px 3px 0 1.5px ${INK}` },
+      }, [
+        R('span', { key: 'l', style: { fontSize: '16px', fontWeight: 700, flex: 1 } }, 'More Options'),
+        R('span', { key: 'p', style: { fontSize: '20px', fontWeight: 800, color: '#6B6B70', lineHeight: 1, transform: open ? 'rotate(45deg)' : 'rotate(0deg)', transition: 'transform 300ms cubic-bezier(.34,1.56,.64,1)' } }, '+'),
+      ]),
+      R('div', {
+        key: 'body',
+        style: { display: 'grid', gridTemplateRows: open ? '1fr' : '0fr', opacity: open ? 1 : 0, marginTop: open ? '10px' : '0px', transition: 'grid-template-rows 380ms cubic-bezier(.34,1.56,.64,1), opacity 220ms ease, margin-top 380ms ease' },
+      }, R('div', { style: { overflow: 'hidden', padding: '2px 6px 6px 0' } },
+        R('div', { style: { background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '16px', overflow: 'hidden', boxShadow: `3px 3px 0 0 ${sh}, 3px 3px 0 1.5px ${INK}` } },
+          rows.map(([l, v], i) => R('div', {
+            key: i,
+            style: {
+              display: 'flex', alignItems: 'center', padding: '12px 14px', minHeight: '44px',
+              borderBottom: i < rows.length - 1 ? '1.5px solid #E6E6EA' : 'none',
+              opacity: open ? 1 : 0, transform: open ? 'translateY(0)' : 'translateY(8px)',
+              transition: `opacity 220ms ease ${open ? i * 28 + 60 : 0}ms, transform 220ms ease ${open ? i * 28 + 60 : 0}ms`,
+            },
+          }, [
+            R('span', { key: 'a', style: { fontSize: '15px', fontWeight: 700, flex: 1 } }, l),
+            R('span', { key: 'b', style: { fontSize: '15px', fontWeight: 700, color: '#6B6B70' } }, v),
+          ]))))),
+    ]);
+  }
+
+  openSheet() {
+    if (this.state.sheet === 0) { this.setState({ sheet: 1 }); return; }
+    this.setState({ sheet: 2 });
+    this.later(() => this.setState({ sheet: 3 }), 560);
+    this.later(() => this.setState({ sheet: 0 }), 920);
+  }
+
+  sheetDemoEl() {
+    const R = React.createElement;
+    const a = this.accent();
+    const sh = this.shadowOf(a);
+    const st = this.state.sheet;
+    const open = st >= 1 && st <= 2;
+    const burst = st === 2;
+    return R('div', {
+      style: { position: 'relative', width: '210px', height: '210px', borderRadius: '18px', background: '#FFFFFF', border: `1.5px solid ${INK}`, overflow: 'hidden' },
+    }, [
+      R('div', { key: 'content', style: { padding: '16px', transform: open ? 'scale(.96)' : 'scale(1)', transition: 'transform 380ms cubic-bezier(.16,1,.3,1)' } }, [
+        R('div', { key: 't', style: { fontSize: '20px', fontWeight: 900, letterSpacing: '-0.02em', marginBottom: '12px' } }, 'Running'),
+        R('div', { key: 'c', style: { display: 'flex', alignItems: 'center', gap: '8px', border: `1.5px solid ${INK}`, borderRadius: '14px', padding: '10px 12px', boxShadow: `3px 3px 0 0 ${sh}, 3px 3px 0 1.5px ${INK}` } }, [
+          R('span', { key: 'tok', style: { width: '26px', height: '26px', borderRadius: '999px', background: rgba(a, 0.22), border: `1.5px solid ${INK}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' } }, '🏃'),
+          R('span', { key: 'n', style: { fontSize: '14px', fontWeight: 800, flex: 1 } }, 'Weekly Goal'),
+          R('span', { key: 'm', style: { fontSize: '13px', fontWeight: 800, color: a } }, '7 / wk'),
+        ]),
+      ]),
+      R('div', { key: 'scrim', style: { position: 'absolute', inset: 0, background: 'rgba(11,11,12,.18)', opacity: open ? 1 : 0, pointerEvents: 'none', transition: 'opacity 240ms ease' } }),
+      R('div', {
+        key: 'sheet',
+        style: {
+          position: 'absolute', left: '-1.5px', right: '-1.5px', bottom: '-1.5px', height: '136px', background: '#FFFFFF',
+          border: `1.5px solid ${INK}`, borderRadius: '18px 18px 0 0', padding: '14px',
+          transform: open ? 'translateY(0)' : 'translateY(105%)',
+          transition: open ? 'transform 380ms cubic-bezier(.16,1,.3,1)' : 'transform 300ms cubic-bezier(.4,0,1,1)',
+        },
+      }, [
+        R('div', { key: 'hdr', style: { display: 'flex', alignItems: 'center', gap: '8px' } }, [
+          R('span', { key: 'x', style: { width: '28px', height: '28px', borderRadius: '999px', border: `1.5px solid ${INK}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 800, color: '#FF3B30' } }, '✕'),
+          R('span', { key: 'ttl', style: { flex: 1, textAlign: 'center', fontSize: '14px', fontWeight: 800 } }, '🏃 Goal'),
+          R('span', {
+            key: 'ok',
+            style: {
+              position: 'relative', width: '28px', height: '28px', borderRadius: '999px', border: `1.5px solid ${INK}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 800, color: '#34C759',
+              transform: burst ? 'scale(1.25)' : 'scale(1)',
+              transition: burst ? 'transform 520ms cubic-bezier(.22,1.6,.36,1)' : 'transform 140ms ease',
+            },
+          }, [
+            '✓',
+            R('span', { key: 'ring', style: { position: 'absolute', inset: '-4px', borderRadius: '999px', border: '2px solid #34C759', opacity: 0, animation: burst ? 'sd-halo .42s ease-out 1' : 'none' } }),
+          ]),
+        ]),
+        R('div', { key: 'body', style: { marginTop: '14px', fontSize: '22px', fontWeight: 900, letterSpacing: '-0.025em' } }, 'Weekly Goal'),
+        R('div', { key: 'sub', style: { marginTop: '4px', fontSize: '12px', fontWeight: 700, color: '#6B6B70' } }, st === 3 ? 'committed' : 'press ✓ to commit'),
+      ]),
+    ]);
+  }
+
+  pushDemoEl() {
+    const R = React.createElement;
+    const a = this.accent();
+    const sh = this.shadowOf(a);
+    const p = this.state.pushed;
+    const frame = { position: 'absolute', inset: 0, padding: '14px', transition: 'transform 340ms cubic-bezier(.16,1,.3,1), opacity 340ms ease' };
+    return R('div', {
+      style: { position: 'relative', width: '210px', height: '210px', borderRadius: '18px', background: '#FFFFFF', border: `1.5px solid ${INK}`, overflow: 'hidden' },
+    }, [
+      R('div', { key: 'list', style: Object.assign({}, frame, { transform: p ? 'translateX(-28%)' : 'translateX(0)', opacity: p ? 0.4 : 1 }) }, [
+        R('div', { key: 'h', style: { fontSize: '19px', fontWeight: 900, letterSpacing: '-0.02em', marginBottom: '12px' } }, 'Activities'),
+        R('div', { key: 'c', style: { border: `1.5px solid ${INK}`, borderRadius: '14px', padding: '10px', fontSize: '13px', fontWeight: 800, display: 'flex', justifyContent: 'space-between', boxShadow: `3px 3px 0 0 ${sh}, 3px 3px 0 1.5px ${INK}` } },
+          [R('span', { key: 'a' }, '📚 Reading'), R('span', { key: 'b', style: { color: a } }, '9h 13m')]),
+      ]),
+      R('div', { key: 'detail', style: Object.assign({}, frame, { transform: p ? 'translateX(0)' : 'translateX(100%)', background: '#FFFFFF' }) }, [
+        R('div', { key: 'b', style: { fontSize: '12px', fontWeight: 800, color: '#6B6B70' } }, '‹ Activities'),
+        R('div', { key: 'h', style: { fontSize: '21px', fontWeight: 900, letterSpacing: '-0.025em', marginTop: '4px' } }, '📚 Reading'),
+        R('div', { key: 'g', style: { display: 'grid', gridTemplateColumns: 'repeat(7, 13px)', gap: '3px', marginTop: '14px' } },
+          Array.from({ length: 21 }, (_, i) => R('span', {
+            key: i,
+            style: {
+              width: '13px', height: '13px', borderRadius: '4px',
+              background: i % 5 === 0 ? '#E9E9EC' : rgba(a, 0.15 + 0.85 * ((i % 5) / 4)),
+              opacity: p ? 1 : 0, transform: p ? 'scale(1)' : 'scale(.6)',
+              transition: `opacity 220ms ease ${i * 14}ms, transform 220ms cubic-bezier(.34,1.56,.64,1) ${i * 14}ms`,
+            },
+          }))),
+      ]),
+      R('div', {
+        key: 'arc',
+        style: {
+          position: 'absolute', right: '18px', bottom: '18px', width: '50px', height: '50px', borderRadius: '999px',
+          background: '#FFFFFF', border: `1.5px solid ${INK}`, boxShadow: `3px 3px 0 0 ${sh}, 3px 3px 0 1.5px ${INK}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px',
+          transform: p ? 'scale(1.15)' : 'scale(1)', transition: 'transform 340ms cubic-bezier(.16,1,.3,1)',
+        },
+      }, '▶'),
+    ]);
+  }
+
+  accentDemoEl() {
+    const R = React.createElement;
+    const a = this.accent();
+    const sh = this.shadowOf(a);
+    return R('div', { style: { display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'center' } }, [
+      R('div', {
+        key: 'card',
+        style: { display: 'flex', alignItems: 'center', gap: '10px', background: '#FFFFFF', border: `1.5px solid ${INK}`, borderRadius: '16px', padding: '12px 14px', width: '250px', boxShadow: `3px 3px 0 0 ${sh}, 3px 3px 0 1.5px ${INK}`, transition: 'box-shadow 400ms ease' },
+      }, [
+        R('span', { key: 't', style: { width: '34px', height: '34px', borderRadius: '999px', background: rgba(a, 0.22), border: `1.5px solid ${INK}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', transition: 'background 400ms ease' } }, '🏃'),
+        R('span', { key: 'n', style: { flex: 1, fontSize: '16px', fontWeight: 800 } }, 'Running'),
+        R('span', { key: 'm', style: { fontSize: '15px', fontWeight: 800, color: a, transition: 'color 400ms ease' } }, '13 mi'),
+      ]),
+      R('div', { key: 'grid', style: { display: 'grid', gridTemplateColumns: 'repeat(7, 14px)', gap: '3px' } },
+        Array.from({ length: 21 }, (_, i) => R('span', {
+          key: i,
+          style: { width: '14px', height: '14px', borderRadius: '4px', background: i % 5 === 0 ? '#E9E9EC' : rgba(a, 0.15 + 0.85 * ((i % 5) / 4)), transition: 'background 400ms ease' },
+        }))),
+    ]);
+  }
+}
+
+</script>
+</body>
+</html>

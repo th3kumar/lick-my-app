@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin · Event details</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#0B0B0C;text-decoration:none}
+a:hover{color:#6B6B70}
+.tab{display:flex;align-items:center;gap:0;border:none;border-radius:999px;padding:10px 12px;color:#6B6B70;background:transparent;font-family:inherit;cursor:pointer}
+.tab.on{gap:8px;background:#0B0B0C;color:#FFFFFF;padding:10px 16px}
+.tab.on:hover{color:#FFFFFF}
+.ib{width:40px;height:40px;border-radius:999px;background:#FFFFFF;border:1.5px solid #1A1A1C;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;color:#0B0B0C;font-family:inherit;font-size:15px;font-weight:800;box-shadow:3px 3px 0 0 rgb(223, 207, 162), 3px 3px 0 1.5px #1A1A1C}
+.grp{background:#FFFFFF;border:1.5px solid #1A1A1C;border-radius:16px;box-shadow:3px 3px 0 0 rgb(223, 207, 162), 3px 3px 0 1.5px #1A1A1C;overflow:hidden}
+.row{display:flex;align-items:center;gap:8px;padding:13px 16px;min-height:48px;border-bottom:1.5px solid #E6E6EA}
+.row.last{border-bottom:none}
+.rl{flex:1;font-size:16px;font-weight:700}
+.rv{font-size:15px;font-weight:700;color:#6B6B70}
+.menu{font-size:12px;color:#6B6B70;padding-left:8px}
+.gh{font-size:13px;font-weight:700;color:#6B6B70;margin-bottom:6px;padding-left:4px}
+.foot{font-size:13px;font-weight:600;color:#6B6B70;padding:8px 4px 0;line-height:1.5}
+.pill{background:#F0F0F3;border-radius:8px;padding:6px 12px;font-size:14px;font-weight:800;white-space:nowrap}
+.field{display:block;width:100%;background:#FFFFFF;border:1.5px solid #1A1A1C;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:700;color:#0B0B0C;font-family:inherit;box-shadow:3px 3px 0 0 rgb(223, 207, 162), 3px 3px 0 1.5px #1A1A1C}
+.tog{width:46px;height:28px;border-radius:999px;background:#34C759;border:1.5px solid #1A1A1C;position:relative;display:inline-block;flex-shrink:0}
+.tog.off{background:#FFFFFF}
+.knob{position:absolute;top:1px;left:20px;width:22px;height:22px;border-radius:999px;background:#FFFFFF;border:1.5px solid #1A1A1C}
+.tog.off .knob{left:1px}
+.step{display:flex;border:1.5px solid #1A1A1C;border-radius:10px;overflow:hidden}
+.step button{border:none;background:#FFFFFF;font-size:17px;font-weight:800;padding:8px 18px;cursor:pointer;color:#0B0B0C;font-family:inherit}
+.step span{width:1.5px;background:#1A1A1C}
+.sv{font-size:16px;font-weight:800;min-width:24px;text-align:right}
+.ttok{width:32px;height:32px;border-radius:999px;border:1.5px solid #1A1A1C;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;flex-shrink:0}
+.well{width:28px;height:28px;border-radius:999px;border:1.5px solid #1A1A1C;flex-shrink:0;padding:0;cursor:pointer}
+.grip{color:#C4C4C7;display:flex}
+.x{border:none;background:none;padding:6px;color:#6B6B70;cursor:pointer;display:flex}
+</style>
+</helmet>
+<div style="font-family: Nunito, 'SF Pro Rounded', -apple-system, system-ui, sans-serif; color: #0B0B0C; background: #FFFFFF; min-height: 1820px; padding-bottom: 72px">
+
+  <header style="background: rgba(255,255,255,.9); border-bottom: 1.5px solid #E6E6EA">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 16px">
+      <div style="display: flex; align-items: baseline; gap: 10px">
+        <span style="font-size: 16px; font-weight: 800; letter-spacing: -0.01em">Tier Night</span>
+        <span style="font-size: 13px; font-weight: 600; color: #6B6B70">admin</span>
+      </div>
+      <nav aria-label="Admin sections" style="display: inline-flex; gap: 4px; background: #FFFFFF; border: 1.5px solid #1A1A1C; border-radius: 999px; box-shadow: 3px 3px 0 0 #E9E9EC, 3px 3px 0 1.5px #1A1A1C; padding: 6px">
+        <a class="tab" href="p1h-admin-events.dc.html" aria-label="Events"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h11M4 18h6"/></svg></a>
+        <a class="tab on" href="#" aria-current="page"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg><span style="font-size: 15px; font-weight: 800; white-space: nowrap">Details</span></a>
+        <a class="tab" href="p1h-admin-people.dc.html" aria-label="People"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 4.5a3.5 3.5 0 0 1 0 7M21 20c0-2.6-1.6-4.8-4-5.6"/></svg></a>
+        <a class="tab" href="p1h-admin-submissions.dc.html" aria-label="Submissions"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></a>
+        <a class="tab" href="p2h-admin-live.dc.html" aria-label="Live control"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg></a>
+        <a class="tab" href="p2h-admin-results.dc.html" aria-label="Results"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8"/></svg></a>
+      </nav>
+      <button class="ib" type="button" aria-label="Lock admin"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>
+    </div>
+  </header>
+
+  <main style="max-width: 1120px; margin: 0 auto; padding: 0 24px">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 32px 0 18px">
+      <a class="ib" href="p1h-admin-events.dc.html" aria-label="Back to events"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+      <div style="display: flex; gap: 12px">
+        <button class="ib" type="button" aria-label="Discard changes" style="color: #FF3B30">✕</button>
+        <button class="ib" type="button" aria-label="Apply changes" style="color: #34C759">✓</button>
+      </div>
+    </div>
+    <h1 style="margin: 0 0 32px; font-size: 38px; font-weight: 900; letter-spacing: -0.035em; line-height: 1.1">[EVENT NAME]</h1>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 28px 40px; align-items: start">
+
+      <div style="display: flex; flex-direction: column; gap: 28px">
+        <section aria-labelledby="g-basics">
+          <h2 id="g-basics" style="margin: 0 0 20px; font-size: 24px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1">Basics</h2>
+          <div style="display: flex; flex-direction: column; gap: 18px">
+            <label><span class="gh" style="display: block">Name</span><input class="field" value="[EVENT NAME]"></label>
+            <label><span class="gh" style="display: block">Topic</span><input class="field" value="[TOPIC]"></label>
+            <label><span class="gh" style="display: block">Description</span><textarea class="field" rows="3" placeholder="Optional" style="resize: none; line-height: 1.4"></textarea></label>
+            <div>
+              <span class="gh" style="display: block">Banner</span>
+              <div style="height: 120px; border-radius: 12px; border: 1.5px solid #1A1A1C; background: repeating-linear-gradient(135deg, rgba(11,11,12,.08) 0 6px, rgba(11,11,12,0) 6px 12px); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #6B6B70">banner image — drop here</div>
+            </div>
+            <label><span class="gh" style="display: block">Venue</span><input class="field" placeholder="Optional" value="[VENUE]"></label>
+          </div>
+        </section>
+
+        <section>
+          <div class="gh">Timing</div>
+          <div class="grp">
+            <div class="row"><span class="rl">Starts</span><span class="pill">Fri, [START TIME]</span></div>
+            <div class="row"><span class="rl">Submissions close</span><span class="pill">2h before start</span></div>
+            <div class="row last"><span class="rl">Submissions open</span><span class="tog" role="switch" aria-checked="true" aria-label="Submissions open"><span class="knob"></span></span></div>
+          </div>
+          <div class="foot">closing two hours early gives you time to hide, fix or reassign anything before people arrive.</div>
+        </section>
+
+        <section>
+          <div class="gh">Rules</div>
+          <div class="grp">
+            <div class="row"><span class="rl">Characters per person</span><span class="sv">4</span><span class="step"><button type="button" aria-label="Fewer">−</button><span></span><button type="button" aria-label="More">+</button></span></div>
+            <div class="row"><span class="rl">Montage length</span><span class="sv">90s</span><span class="step"><button type="button" aria-label="Shorter">−</button><span></span><button type="button" aria-label="Longer">+</button></span></div>
+            <div class="row"><span class="rl">Montage required</span><span class="tog off" role="switch" aria-checked="false" aria-label="Montage required"><span class="knob"></span></span></div>
+            <a class="row last" href="#"><span class="rl">Rules text</span><span class="rv">Default</span><span style="font-size: 16px; color: #C4C4C7; font-weight: 800; padding-left: 8px">›</span></a>
+          </div>
+          <div style="height: 14px"></div>
+          <div style="background: #FFFFFF; border: 1.5px solid #1A1A1C; border-radius: 16px; padding: 14px 16px; box-shadow: 3px 3px 0 0 rgb(223, 207, 162), 3px 3px 0 1.5px #1A1A1C">
+            <div style="font-size: 19px; font-weight: 800; color: #C2A24C">4 characters · 90s each</div>
+            <div style="font-size: 13px; font-weight: 600; color: #6B6B70; margin-top: 4px">Each submitter brings up to 4 characters, with an optional montage of up to 90 seconds per character.</div>
+          </div>
+        </section>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 28px">
+        <section>
+          <div class="gh">Tiers</div>
+          <div class="grp">
+            <div class="row"><span class="grip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span><span class="ttok" style="background: rgba(194, 76, 122, 0.22)">S</span><span class="rl" style="padding-left: 4px">S</span><span class="rv">5 pts</span><button class="well" type="button" aria-label="Tier S colour" style="background: #C24C7A; margin-left: 8px"></button><button class="x" type="button" aria-label="Delete tier S"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+            <div class="row"><span class="grip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span><span class="ttok" style="background: rgba(194, 112, 76, 0.22)">A</span><span class="rl" style="padding-left: 4px">A</span><span class="rv">4 pts</span><button class="well" type="button" aria-label="Tier A colour" style="background: #C2704C; margin-left: 8px"></button><button class="x" type="button" aria-label="Delete tier A"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+            <div class="row"><span class="grip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span><span class="ttok" style="background: rgba(194, 162, 76, 0.22)">B</span><span class="rl" style="padding-left: 4px">B</span><span class="rv">3 pts</span><button class="well" type="button" aria-label="Tier B colour" style="background: #C2A24C; margin-left: 8px"></button><button class="x" type="button" aria-label="Delete tier B"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+            <div class="row"><span class="grip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span><span class="ttok" style="background: rgba(122, 182, 72, 0.22)">C</span><span class="rl" style="padding-left: 4px">C</span><span class="rv">2 pts</span><button class="well" type="button" aria-label="Tier C colour" style="background: #7AB648; margin-left: 8px"></button><button class="x" type="button" aria-label="Delete tier C"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+            <div class="row last"><span class="grip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span><span class="ttok" style="background: rgba(76, 141, 194, 0.22)">D</span><span class="rl" style="padding-left: 4px">D</span><span class="rv">1 pt</span><button class="well" type="button" aria-label="Tier D colour" style="background: #4C8DC2; margin-left: 8px"></button><button class="x" type="button" aria-label="Delete tier D"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+          </div>
+          <div style="height: 14px"></div>
+          <button type="button" style="background: #FFFFFF; border: 1.5px solid #1A1A1C; cursor: pointer; font-family: inherit; color: #0B0B0C; box-shadow: 3px 3px 0 0 rgb(223, 207, 162), 3px 3px 0 1.5px #1A1A1C; border-radius: 14px; padding: 13px 20px; font-size: 15px; font-weight: 800; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px"><span style="font-size: 17px">⊕</span> Add tier</button>
+          <div class="foot">drag to reorder. the top row scores highest. tiers lock when you press start.</div>
+        </section>
+
+        <section>
+          <div class="gh">Voting</div>
+          <div class="grp">
+            <div class="row"><span class="rl">Vote timer</span><span class="sv">20s</span><span class="step"><button type="button" aria-label="Shorter">−</button><span></span><button type="button" aria-label="Longer">+</button></span></div>
+            <div class="row"><span class="rl">Owner votes on own character</span><span class="tog off" role="switch" aria-checked="false" aria-label="Owner votes"><span class="knob"></span></span></div>
+            <div class="row last"><span class="rl">Exact half rounds</span><span class="rv">Toward the claim</span><span class="menu">⌃⌄</span></div>
+          </div>
+          <div class="foot">the verdict is the average vote rounded to the nearest tier, so nobody can swing it alone.</div>
+        </section>
+
+        <section>
+          <div class="gh">Show</div>
+          <div class="grp">
+            <div class="row"><span class="rl">Countdown</span><span class="rv">10s</span><span class="menu">⌃⌄</span></div>
+            <div class="row"><span class="rl">Board starts in</span><span class="rv">Mystery</span><span class="menu">⌃⌄</span></div>
+            <div class="row"><span class="rl">Best Self-Judge</span><span class="tog" role="switch" aria-checked="true" aria-label="Best Self-Judge award"><span class="knob"></span></span></div>
+            <div class="row"><span class="rl">Most Delusional</span><span class="tog" role="switch" aria-checked="true" aria-label="Most Delusional award"><span class="knob"></span></span></div>
+            <div class="row"><span class="rl">Most Humble</span><span class="tog" role="switch" aria-checked="true" aria-label="Most Humble award"><span class="knob"></span></span></div>
+            <div class="row"><span class="rl">Most Controversial</span><span class="tog" role="switch" aria-checked="true" aria-label="Most Controversial award"><span class="knob"></span></span></div>
+            <div class="row"><span class="rl">Unanimous</span><span class="tog" role="switch" aria-checked="true" aria-label="Unanimous award"><span class="knob"></span></span></div>
+            <div class="row last"><span class="rl">Top Submitter</span><span class="tog off" role="switch" aria-checked="false" aria-label="Top Submitter award"><span class="knob"></span></span></div>
+          </div>
+          <div class="foot">awards appear on the final screen, one at a time, before the full board.</div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1820}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

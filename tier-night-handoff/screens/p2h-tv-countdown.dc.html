@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TV · Countdown</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+@keyframes sd-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes sd-halo{0%{transform:scale(1);opacity:.4}100%{transform:scale(1.8);opacity:0}}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; overflow: hidden; font-family: Nunito, 'SF Pro Rounded', -apple-system, system-ui, sans-serif; color: #0B0B0C; background: #FFFFFF; padding: 40px 64px; display: flex; flex-direction: column; align-items: center">
+  <div style="align-self: stretch; display: flex; align-items: baseline; justify-content: space-between">
+    <div style="display: flex; align-items: baseline; gap: 12px"><span style="font-size: 18px; font-weight: 800; letter-spacing: -0.01em">Tier Night</span><span style="font-size: 15px; font-weight: 700; color: #6B6B70">[EVENT NAME]</span></div>
+    <span style="font-size: 15px; font-weight: 700; color: #6B6B70">phones are counting too</span>
+  </div>
+
+  <div style="position: relative; width: 520px; height: 520px; display: flex; align-items: center; justify-content: center; margin-top: 4px">
+    <div aria-hidden="true" style="position: absolute; inset: 0; animation: sd-spin 8s linear infinite">
+      <sc-for list="{{ring}}" as="c" hint-placeholder-count="75"><span style="{{c.style}}">{{c.ch}}</span></sc-for>
+    </div>
+    <span aria-hidden="true" style="position: absolute; width: 300px; height: 300px; border-radius: 999px; background: rgba(194, 162, 76, 0.45); animation: sd-halo 1.6s ease-out infinite"></span>
+    <button type="button" onClick="{{restart}}" aria-label="Restart countdown" style="position: relative; width: 300px; height: 300px; border-radius: 999px; background: #FFFFFF; border: 1.5px solid #1A1A1C; box-shadow: 5px 5px 0 0 rgb(223, 207, 162), 5px 5px 0 1.5px #1A1A1C; display: flex; align-items: center; justify-content: center; padding: 0 0 16px; cursor: pointer; font-family: inherit">
+      <span style="font-size: 220px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; color: #FFFFFF; -webkit-text-stroke: 6px #1A1A1C; text-shadow: 12px 12px 0 #C9CEF0">{{n}}</span>
+    </button>
+  </div>
+
+  <h1 style="margin: 8px 0 0; font-size: 44px; font-weight: 900; letter-spacing: -0.03em; line-height: 1.1">[TOPIC]</h1>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+function arc(label, radius, color, size) {
+  const s = (label.toUpperCase() + '  •  ').repeat(3).split('');
+  const step = 360 / s.length;
+  return s.map((ch, i) => ({
+    ch: ch === ' ' ? ' ' : ch,
+    style: {
+      position: 'absolute', left: '50%', top: '50%', width: 0, height: 0,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: size + 'px', fontWeight: 800, letterSpacing: '0.08em', color,
+      transform: `rotate(${i * step}deg) translateY(-${radius}px)`
+    }
+  }));
+}
+class Component extends DCLogic {
+  state = { n: 10 };
+  componentDidMount() {
+    this._t = setInterval(() => this.setState(s => ({ n: s.n <= 1 ? 10 : s.n - 1 })), 1000);
+  }
+  componentWillUnmount() { clearInterval(this._t); }
+  renderVals() {
+    return {
+      n: this.state.n,
+      ring: arc('Tier Night starts in', 232, '#C2A24C', 18),
+      restart: () => this.setState({ n: 10 })
+    };
+  }
+}
+</script>
+</body>
+</html>

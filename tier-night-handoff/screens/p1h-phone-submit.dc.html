@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone · New character</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#0B0B0C;text-decoration:none}
+a:hover{color:#6B6B70}
+.ib{width:40px;height:40px;border-radius:999px;background:#FFFFFF;border:1.5px solid #1A1A1C;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;color:#0B0B0C;font-family:inherit;font-size:15px;font-weight:800;box-shadow:3px 3px 0 0 rgb(162, 196, 223), 3px 3px 0 1.5px #1A1A1C}
+.field{display:block;width:100%;background:#FFFFFF;border:1.5px solid #1A1A1C;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:700;color:#0B0B0C;font-family:inherit;box-shadow:3px 3px 0 0 rgb(162, 196, 223), 3px 3px 0 1.5px #1A1A1C}
+.gh{font-size:13px;font-weight:700;color:#6B6B70;margin-bottom:6px;padding-left:4px}
+.foot{font-size:13px;font-weight:600;color:#6B6B70;padding:8px 4px 0;line-height:1.5}
+.grp{background:#FFFFFF;border:1.5px solid #1A1A1C;border-radius:16px;box-shadow:3px 3px 0 0 rgb(162, 196, 223), 3px 3px 0 1.5px #1A1A1C;overflow:hidden}
+.row{display:flex;align-items:center;gap:10px;padding:10px 8px 10px 12px;min-height:48px;border-bottom:1.5px solid #E6E6EA}
+.row.last{border-bottom:none}
+.grip{color:#C4C4C7;display:flex;flex-shrink:0}
+.th{width:40px;height:40px;border-radius:10px;border:1.5px solid #1A1A1C;background:rgba(76, 141, 194, 0.22);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.x{width:36px;height:36px;border:none;background:none;padding:0;color:#6B6B70;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cell{width:14px;height:14px;border-radius:4px}
+.h{position:absolute;width:14px;height:14px;background:#FFFFFF;border:1.5px solid #1A1A1C;border-radius:4px}
+.chip{border:1.5px solid #1A1A1C;background:#FFFFFF;border-radius:999px;padding:7px 15px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;color:#0B0B0C;box-shadow:2px 2px 0 0 rgb(162, 196, 223), 2px 2px 0 1.5px #1A1A1C}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1320px; font-family: Nunito, 'SF Pro Rounded', -apple-system, system-ui, sans-serif; color: #0B0B0C; background: #FFFFFF; padding: 16px 16px 32px; display: flex; flex-direction: column">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px">
+    <a class="ib" href="p1h-phone-mine.dc.html" aria-label="Cancel" style="color: #FF3B30">✕</a>
+    <span style="font-size: 13px; font-weight: 700; color: #6B6B70">3 of 4</span>
+    <button class="ib" type="button" aria-label="Add character" disabled style="color: #C4C4C7; border-color: #C4C4C7; box-shadow: none; cursor: default">✓</button>
+  </div>
+  <h1 style="margin: 0 0 24px; font-size: 30px; font-weight: 900; letter-spacing: -0.03em; line-height: 1.1">New character</h1>
+
+  <label>
+    <span class="gh" style="display: block">Name</span>
+    <input class="field" value="[CHARACTER NAME]">
+  </label>
+  <div style="margin-top: 14px; background: #F4F4F6; border-radius: 14px; padding: 14px 16px">
+    <div style="font-size: 15px; font-weight: 800">already added by someone</div>
+    <div style="font-size: 13px; font-weight: 600; color: #6B6B70; margin-top: 4px">pick another character. we never say who got there first.</div>
+  </div>
+
+  <div class="gh" style="margin-top: 28px">Photo</div>
+  <div style="position: relative; height: 270px; border-radius: 12px; border: 1.5px solid #1A1A1C; background: repeating-linear-gradient(135deg, rgba(11,11,12,.10) 0 6px, rgba(11,11,12,0) 6px 12px); overflow: hidden; display: flex; align-items: center; justify-content: center">
+    <div style="position: relative; width: 210px; height: 210px; border: 2px solid #1A1A1C; border-radius: 4px; background: rgba(76, 141, 194, 0.22); box-shadow: 0 0 0 999px rgba(11,11,12,0.18)">
+      <span class="h" style="top: -8px; left: -8px"></span>
+      <span class="h" style="top: -8px; right: -8px"></span>
+      <span class="h" style="bottom: -8px; left: -8px"></span>
+      <span class="h" style="bottom: -8px; right: -8px"></span>
+    </div>
+  </div>
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; padding-right: 2px">
+    <button class="chip" type="button">Choose photo</button>
+    <span style="font-size: 13px; font-weight: 600; color: #6B6B70">drag to frame the square</span>
+  </div>
+
+  <div style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 28px; padding: 0 4px 6px">
+    <span style="font-size: 13px; font-weight: 700; color: #6B6B70">Montage</span>
+    <span><span style="font-size: 17px; font-weight: 800; color: #4C8DC2">62s</span><span style="font-size: 13px; font-weight: 700; color: #6B6B70"> of 90s</span></span>
+  </div>
+  <div aria-hidden="true" style="display: grid; grid-template-columns: repeat(18, 14px); gap: 3px; padding: 0 4px; margin-bottom: 14px">
+    <span class="cell" style="background: #4C8DC2"></span><span class="cell" style="background: #4C8DC2"></span><span class="cell" style="background: #4C8DC2"></span><span class="cell" style="background: #4C8DC2"></span><span class="cell" style="background: #4C8DC2"></span><span class="cell" style="background: #4C8DC2"></span><span class="cell" style="background: #4C8DC2"></span><span class="cell" style="background: #4C8DC2"></span><span class="cell" style="background: #4C8DC2"></span><span class="cell" style="background: #4C8DC2"></span><span class="cell" style="background: #4C8DC2"></span><span class="cell" style="background: #4C8DC2"></span><span class="cell" style="background: rgba(76, 141, 194, 0.5)"></span><span class="cell" style="background: #E9E9EC"></span><span class="cell" style="background: #E9E9EC"></span><span class="cell" style="background: #E9E9EC"></span><span class="cell" style="background: #E9E9EC"></span><span class="cell" style="background: #E9E9EC"></span>
+  </div>
+  <div class="grp">
+    <div class="row">
+      <span class="grip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
+      <span class="th"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A1A1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="M20 16l-5-5-9 8"/></svg></span>
+      <span style="flex: 1; font-size: 16px; font-weight: 700">Photo</span><span style="font-size: 15px; font-weight: 700; color: #6B6B70">4s</span>
+      <button class="x" type="button" aria-label="Remove photo 1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="row">
+      <span class="grip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
+      <span class="th"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A1A1C" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg></span>
+      <span style="flex: 1; font-size: 16px; font-weight: 700">Clip</span><span style="font-size: 15px; font-weight: 700; color: #6B6B70">38s</span>
+      <button class="x" type="button" aria-label="Remove clip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="row">
+      <span class="grip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
+      <span class="th"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A1A1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="M20 16l-5-5-9 8"/></svg></span>
+      <span style="flex: 1; font-size: 16px; font-weight: 700">Photo</span><span style="font-size: 15px; font-weight: 700; color: #6B6B70">4s</span>
+      <button class="x" type="button" aria-label="Remove photo 2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="row">
+      <span class="grip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
+      <span class="th"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A1A1C" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg></span>
+      <span style="flex: 1; min-width: 0">
+        <span style="display: flex; justify-content: space-between"><span style="font-size: 16px; font-weight: 700">Clip</span><span style="font-size: 15px; font-weight: 700; color: #6B6B70">64%</span></span>
+        <span style="display: block; height: 6px; border-radius: 999px; background: #E9E9EC; margin-top: 6px; overflow: hidden"><span style="display: block; width: 64%; height: 100%; background: #4C8DC2"></span></span>
+      </span>
+      <button class="x" type="button" aria-label="Cancel upload"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="row last">
+      <span class="grip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
+      <span class="th" style="background: #F4F4F6; border-color: #C4C4C7"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B6B70" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg></span>
+      <span style="flex: 1; font-size: 16px; font-weight: 700; color: #6B6B70">Didn’t upload</span>
+      <button class="chip" type="button" style="padding: 5px 12px; font-size: 13px">Retry</button>
+      <button class="x" type="button" aria-label="Remove failed clip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+  </div>
+  <div style="height: 16px"></div>
+  <button type="button" style="background: #FFFFFF; border: 1.5px solid #1A1A1C; cursor: pointer; font-family: inherit; color: #0B0B0C; box-shadow: 3px 3px 0 0 rgb(162, 196, 223), 3px 3px 0 1.5px #1A1A1C; border-radius: 14px; padding: 13px 20px; font-size: 15px; font-weight: 800; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px"><span style="font-size: 17px">⊕</span> Add photos or clips</button>
+  <div class="foot">drag to reorder. photos show for 4s, clips play in full. jpg, png, heic, mp4 or mov, up to 50 mb a clip.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1320}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TV · Montage</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+.seg{height:10px;border-radius:4px;background:#E9E9EC;border:1.5px solid #1A1A1C}
+.key{background:#F0F0F3;border-radius:8px;padding:3px 9px;font-size:13px;font-weight:800;color:#0B0B0C}
+.card{background:#FFFFFF;border:1.5px solid #1A1A1C;border-radius:16px;box-shadow:3px 3px 0 0 rgb(162, 196, 223), 3px 3px 0 1.5px #1A1A1C}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; overflow: hidden; position: relative; font-family: Nunito, 'SF Pro Rounded', -apple-system, system-ui, sans-serif; color: #0B0B0C; background: #FFFFFF">
+  <div aria-label="Montage media, fullscreen" role="img" style="position: absolute; inset: 0; background: repeating-linear-gradient(135deg, rgba(76, 141, 194, 0.16) 0 14px, rgba(76, 141, 194, 0.06) 14px 28px); display: flex; align-items: center; justify-content: center">
+    <span style="font-size: 15px; font-weight: 700; color: #6B6B70">photo or clip, fullscreen</span>
+  </div>
+
+  <div style="position: absolute; top: 24px; left: 32px; right: 32px; display: flex; gap: 6px">
+    <span class="seg" style="flex: 4; background: #4C8DC2"></span>
+    <span class="seg" style="flex: 38; background: #4C8DC2"></span>
+    <span class="seg" style="flex: 4; background: linear-gradient(90deg, #4C8DC2 50%, #E9E9EC 50%)"></span>
+    <span class="seg" style="flex: 4"></span>
+    <span class="seg" style="flex: 12"></span>
+  </div>
+
+  <div class="card" style="position: absolute; top: 56px; left: 32px; display: flex; align-items: center; gap: 12px; padding: 14px 16px; min-width: 360px">
+    <span style="width: 40px; height: 40px; border-radius: 999px; border: 1.5px solid #1A1A1C; background: rgba(76, 141, 194, 0.22); flex-shrink: 0"></span>
+    <span style="flex: 1; min-width: 0">
+      <span style="display: block; font-size: 19px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.1">[CHARACTER NAME]</span>
+      <span style="display: block; font-size: 13px; font-weight: 700; color: #6B6B70; margin-top: 2px">mantu claims</span>
+    </span>
+    <span style="width: 40px; height: 40px; border-radius: 999px; border: 1.5px solid #1A1A1C; background: rgba(194, 112, 76, 0.22); display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 900">A</span>
+  </div>
+
+  <button type="button" aria-label="Pause" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 72px; height: 72px; border-radius: 999px; background: #FFFFFF; border: 1.5px solid #1A1A1C; box-shadow: 3px 3px 0 0 rgb(162, 196, 223), 3px 3px 0 1.5px #1A1A1C; font-size: 26px; display: flex; align-items: center; justify-content: center; padding: 0; color: #0B0B0C; font-family: inherit; cursor: pointer">⏸</button>
+
+  <div class="card" style="position: absolute; bottom: 28px; left: 32px; display: flex; gap: 18px; align-items: center; padding: 12px 16px; font-size: 13px; font-weight: 700; color: #6B6B70">
+    <span><span class="key">Space</span> play / pause</span>
+    <span><span class="key">← →</span> slides</span>
+    <span><span class="key">Esc</span> close</span>
+    <span><span class="key">V</span> open voting</span>
+  </div>
+
+  <div class="card" style="position: absolute; bottom: 28px; right: 32px; padding: 12px 18px; text-align: right">
+    <div style="font-size: 17px; font-weight: 800; color: #4C8DC2">0:44</div>
+    <div style="font-size: 13px; font-weight: 700; color: #6B6B70">of 1:02 · clip 2 of 5</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

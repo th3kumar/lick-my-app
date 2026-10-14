@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tier Night screens</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #FFFFFF; color: #0B0B0C; font-family: Nunito, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  main { max-width: 1120px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1 { margin: 0; font-size: 38px; font-weight: 900; letter-spacing: -0.035em; }
+  p { font-size: 13px; font-weight: 600; color: #6B6B70; line-height: 1.5; }
+  h2 { margin: 36px 0 6px; font-size: 13px; font-weight: 700; color: #6B6B70; padding-left: 4px; }
+  ul { list-style: none; margin: 0; padding: 0; border: 1.5px solid #1A1A1C; border-radius: 16px; overflow: hidden; box-shadow: 3px 3px 0 0 rgb(223, 207, 162), 3px 3px 0 1.5px #1A1A1C; }
+  li a { display: flex; gap: 8px; align-items: center; padding: 13px 16px; min-height: 48px; border-bottom: 1.5px solid #E6E6EA; color: #0B0B0C; text-decoration: none; font-size: 16px; font-weight: 700; }
+  li:last-child a { border-bottom: none; }
+  li a span { flex: 1; }
+  li a small { font-size: 13px; font-weight: 700; color: #6B6B70; }
+  li a:hover { background: #F4F4F6; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Tier Night screens</h1>
+  <p>sundial hi-fi references. serve this folder (npx serve) so support.js loads next to each screen.</p>
+
+  <h2>Phase 1 · Admin</h2>
+  <ul>
+    <li><a href="p1h-admin-events.dc.html"><span>A1 · Events</span><small>/admin</small></a></li>
+    <li><a href="p1h-admin-details.dc.html"><span>A2 · Event details</span><small>/admin/events/[id]</small></a></li>
+    <li><a href="p1h-admin-people.dc.html"><span>A3 · People</span><small>/admin/events/[id]/people</small></a></li>
+    <li><a href="p1h-admin-submissions.dc.html"><span>A4 · Submissions</span><small>/admin/events/[id]/submissions</small></a></li>
+  </ul>
+
+  <h2>Phase 1 · Phone</h2>
+  <ul>
+    <li><a href="p1h-phone-hype.dc.html"><span>P1 · Hype</span><small>/e/[slug]</small></a></li>
+    <li><a href="p1h-phone-username.dc.html"><span>P2 · Username</span><small>/e/[slug]/join</small></a></li>
+    <li><a href="p1h-phone-role.dc.html"><span>P3 · Role</span><small>/e/[slug]/role</small></a></li>
+    <li><a href="p1h-phone-rules.dc.html"><span>P4 · Rules</span><small>/e/[slug]/rules</small></a></li>
+    <li><a href="p1h-phone-submit.dc.html"><span>P5 · New character</span><small>/e/[slug]/characters/new</small></a></li>
+    <li><a href="p1h-phone-mine.dc.html"><span>P6 · My characters</span><small>/e/[slug]/characters</small></a></li>
+    <li><a href="p1h-phone-waiting.dc.html"><span>P7 · Voter waiting</span><small>/e/[slug]/waiting</small></a></li>
+  </ul>
+
+  <h2>Phase 2 · Laptop</h2>
+  <ul>
+    <li><a href="p2h-admin-live.dc.html"><span>L1 · Live control</span><small>/admin/events/[id]/live</small></a></li>
+    <li><a href="p2h-admin-results.dc.html"><span>L2 · Results</span><small>/admin/events/[id]/results</small></a></li>
+  </ul>
+
+  <h2>Phase 2 · TV (/admin/events/[id]/show)</h2>
+  <ul>
+    <li><a href="p2h-tv-preload.dc.html"><span>T1 · Preload</span><small>phase pre</small></a></li>
+    <li><a href="p2h-tv-countdown.dc.html"><span>T2 · Countdown</span><small>phase countdown</small></a></li>
+    <li><a href="p2h-tv-reveal.dc.html"><span>T3 · Submitter reveal</span><small>phase reveal</small></a></li>
+    <li><a href="p2h-tv-board.dc.html"><span>T4 · Board (Mystery)</span><small>board · tray / claimed</small></a></li>
+    <li><a href="p2h-tv-montage.dc.html"><span>T5 · Montage</span><small>board · montage</small></a></li>
+    <li><a href="p2h-tv-voting.dc.html"><span>T6 · Voting open</span><small>board · voting</small></a></li>
+    <li><a href="p2h-tv-verdict.dc.html"><span>T7 · Verdict</span><small>board · verdict</small></a></li>
+    <li><a href="p2h-tv-final.dc.html"><span>T8 · Final + awards</span><small>phase done</small></a></li>
+  </ul>
+
+  <h2>Phase 2 · Phone (/e/[slug]/live)</h2>
+  <ul>
+    <li><a href="p2h-phone-countdown.dc.html"><span>N1 · Countdown / idle</span><small>countdown · between votes</small></a></li>
+    <li><a href="p2h-phone-vote.dc.html"><span>N2 · Vote</span><small>board · voting</small></a></li>
+    <li><a href="p2h-phone-owner.dc.html"><span>N3 · Owner sits tight</span><small>board · voting (owner)</small></a></li>
+  </ul>
+</main>
+</body>
+</html>

@@ -1,0 +1,161 @@
+/* ==========================================================================
+   Lick My App — app-level pieces built only from Sundial parts.
+   Values mirror handoff/screens/*.dc.html exactly.
+   ========================================================================== */
+
+html, body { overflow-x: clip; }
+body { min-height: 100dvh; }
+input, textarea, select { font-family: inherit; }
+.sd-field { -webkit-appearance: none; appearance: none; transition: transform 180ms var(--sd-ease-snap), box-shadow 180ms var(--sd-ease-snap); }
+/* focus lifts the field one step toward you: offset 3 → 4, the hard shadow stays hard */
+.sd-field:focus { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--accent-shadow), 4px 4px 0 1.5px var(--sd-outline); }
+textarea.sd-field { resize: none; line-height: 1.4; }
+
+/* ---------- phone frame (390 × 844 reference, fluid up to 430) ---------- */
+.lma-phone {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: calc(16px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  background: var(--sd-canvas);
+  color: var(--sd-ink);
+}
+.lma-phone--tabs { padding-bottom: calc(104px + env(safe-area-inset-bottom)); }
+.lma-phone--sheet { min-height: auto; padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
+.lma-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; min-height: 40px; }
+.lma-wordmark { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
+.lma-nav-caption { font-size: 13px; font-weight: 700; color: var(--sd-text-2); }
+.lma-prose { margin: 8px 0 0; font-size: 13px; font-weight: 600; color: var(--sd-text-2); line-height: 1.5; }
+
+/* hatched placeholders (art slots, banner, crop stage) */
+.lma-hatch-08 { background: repeating-linear-gradient(135deg, rgba(11,11,12,.08) 0 6px, rgba(11,11,12,0) 6px 12px); }
+.lma-hatch-10 { background: repeating-linear-gradient(135deg, rgba(11,11,12,.10) 0 6px, rgba(11,11,12,0) 6px 12px); }
+
+/* ---------- §06 screen push via View Transitions (components/lma/nav.tsx) ----------
+   forward: new 100% → 0 over old → −28% @ .4 alpha · sheet 340ms
+   back:    exact inverse at 300ms (old slides off to the right, on top)
+   tab:     tab switch — old goes instantly, new settles 8px → 0 (settle 220ms)
+   Position and opacity always move at the same speed; no crossfade between screens. */
+::view-transition-group(*) { animation-duration: 340ms; animation-timing-function: var(--sd-ease-sheet); }
+::view-transition-old(root), ::view-transition-new(root) { mix-blend-mode: normal; animation-duration: 340ms; animation-timing-function: var(--sd-ease-sheet); }
+::view-transition-old(root) { animation-name: lma-vt-out; }
+::view-transition-new(root) { animation-name: lma-vt-in; }
+html[data-nav="back"]::view-transition-old(root) { animation-name: lma-vt-out-back; animation-duration: 300ms; z-index: 1; }
+html[data-nav="back"]::view-transition-new(root) { animation-name: lma-vt-in-back; animation-duration: 300ms; }
+html[data-nav="tab"]::view-transition-old(root) { animation: none; opacity: 0; }
+html[data-nav="tab"]::view-transition-new(root) { animation: lma-vt-settle 220ms var(--sd-ease-settle) both; }
+html[data-nav="tab"]::view-transition-old(*) { animation: none; opacity: 0; } /* tab switch: nothing lingers */
+@keyframes lma-vt-out { to { transform: translateX(-28%); opacity: .4; } }
+@keyframes lma-vt-in { from { transform: translateX(100%); } }
+@keyframes lma-vt-out-back { to { transform: translateX(100%); } }
+@keyframes lma-vt-in-back { from { transform: translateX(-28%); opacity: .4; } }
+@keyframes lma-vt-settle { from { transform: translateY(8px); opacity: 0; } }
+
+/* chrome that holds still while the screen moves under it */
+.lma-phone:not(.lma-phone--sheet) > .lma-nav > .lma-wordmark { view-transition-name: lma-wordmark; }
+.lma-phone:not(.lma-phone--sheet) > .lma-nav > .lma-vt-back { view-transition-name: lma-nav-back; }
+.lma-phone:not(.lma-phone--sheet) > .lma-nav > :last-child:not(.lma-wordmark) { view-transition-name: lma-nav-right; }
+.lma-vt-tabbar { view-transition-name: lma-tabbar; }
+.lma-admin-header { view-transition-name: lma-admin-header; }
+/* live tab bar / header: the pill morph (§02) plays on the real element, no snapshot fade */
+::view-transition-old(lma-tabbar), ::view-transition-old(lma-admin-header) { display: none; }
+::view-transition-new(lma-tabbar), ::view-transition-new(lma-admin-header) { animation: none; }
+::view-transition-group(lma-tabbar), ::view-transition-group(lma-admin-header) { z-index: 2; }
+
+/* chrome that only exists on one side fades in place on snap (it is not a screen) */
+::view-transition-old(lma-nav-right), ::view-transition-new(lma-nav-right),
+::view-transition-old(lma-nav-back), ::view-transition-new(lma-nav-back),
+::view-transition-old(lma-wordmark), ::view-transition-new(lma-wordmark) { animation-duration: 180ms; animation-timing-function: var(--sd-ease-snap); }
+
+/* shared elements (morph on sheet 340ms) */
+.lma-vt-join { view-transition-name: lma-join; }
+::view-transition-old(lma-join), ::view-transition-new(lma-join) { height: 100%; object-fit: none; overflow: clip; }
+
+/* ---------- menus: value + ⌃⌄ opens a native menu in place ---------- */
+.lma-menu { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
+.lma-menu select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 16px; }
+.lma-menu--disabled { pointer-events: none; }
+.lma-menu--disabled .sd-row__value, .lma-menu--disabled .sd-row__menu { color: var(--sd-text-3); }
+
+/* ---------- small parts ---------- */
+.lma-dot { width: 10px; height: 10px; border-radius: 999px; border: 1.5px solid var(--sd-outline); flex-shrink: 0; }
+.lma-more { width: 34px; height: 34px; border-radius: 999px; display: flex; align-items: center; justify-content: center; padding: 0; color: var(--sd-ink); flex-shrink: 0; --sd-off: 2px; }
+.lma-x { width: 36px; height: 36px; border: none; background: none; padding: 0; color: var(--sd-text-2); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.lma-x--sm { width: auto; height: auto; padding: 6px; }
+.lma-grip { color: var(--sd-text-3); display: flex; flex-shrink: 0; cursor: grab; touch-action: none; }
+.lma-th { width: 40px; height: 40px; border-radius: 10px; border: 1.5px solid var(--sd-outline); background: var(--accent-wash); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+.lma-th--failed { background: var(--sd-surface-sunken); border-color: var(--sd-text-3); }
+.lma-tok { width: 32px; height: 32px; border-radius: 999px; border: 1.5px solid var(--sd-outline); background: var(--accent-wash); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; flex-shrink: 0; }
+.lma-tok--24 { width: 24px; height: 24px; font-size: 12px; }
+.lma-tok--40 { width: 40px; height: 40px; }
+.lma-chip-raised { --sd-off: 2px; }
+.lma-chip-dark { border: 1.5px solid var(--sd-outline); background: var(--sd-ink); color: #FFFFFF; border-radius: 999px; padding: 7px 15px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit; }
+.lma-progress { display: block; height: 6px; border-radius: 999px; background: var(--sd-heat-empty); margin-top: 6px; overflow: hidden; }
+.lma-progress > span { display: block; height: 100%; background: var(--accent); transition: width 120ms linear; }
+.lma-cell { width: 14px; height: 14px; border-radius: 4px; background: var(--sd-heat-empty); }
+.lma-row-sub { display: block; font-size: 13px; font-weight: 600; color: var(--sd-text-2); }
+.lma-row-btn { width: 100%; background: none; border: none; border-bottom: 1.5px solid var(--sd-separator); text-align: left; color: inherit; font: inherit; cursor: pointer; }
+.lma-row-btn:last-child { border-bottom: none; }
+.lma-locked { border-color: var(--sd-text-3) !important; box-shadow: none !important; }
+
+/* group header row with a trailing value (Montage · 62s of 90s) */
+.lma-gh-row { display: flex; align-items: baseline; justify-content: space-between; padding: 0 4px 6px; }
+
+/* role option (P3) */
+.lma-opt { display: flex; align-items: flex-start; gap: 12px; background: var(--sd-canvas); border: 1.5px solid var(--sd-outline); border-radius: 16px; padding: 14px 16px; width: 100%; text-align: left; color: var(--sd-ink); font: inherit; cursor: pointer; }
+.lma-opt[aria-checked="true"] { box-shadow: 3px 3px 0 0 var(--accent-shadow), 3px 3px 0 1.5px var(--sd-outline); }
+.lma-opt[aria-disabled="true"] { border-color: var(--sd-text-3); cursor: default; }
+.lma-mark { width: 24px; height: 24px; border-radius: 999px; border: 1.5px solid var(--sd-outline); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; margin-top: 8px; color: var(--sd-confirm); }
+
+/* crop stage (P5) */
+.lma-crop { position: relative; height: 270px; border-radius: 12px; border: 1.5px solid var(--sd-outline); overflow: hidden; display: flex; align-items: center; justify-content: center; touch-action: none; user-select: none; }
+.lma-crop__img { position: absolute; left: 0; top: 0; transform-origin: 0 0; max-width: none; pointer-events: none; }
+.lma-crop__frame { position: relative; width: 210px; height: 210px; border: 2px solid var(--sd-outline); border-radius: 4px; box-shadow: 0 0 0 999px rgba(11,11,12,0.18); pointer-events: none; }
+.lma-crop__h { position: absolute; width: 14px; height: 14px; background: #FFFFFF; border: 1.5px solid var(--sd-outline); border-radius: 4px; }
+
+/* expand (§04) — height collapse for dismissed banners */
+.lma-collapse { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 200ms ease-in, opacity 200ms ease-in, margin 200ms ease-in; }
+.lma-collapse > * { overflow: hidden; min-height: 0; }
+.lma-collapse[data-open="false"] { grid-template-rows: 0fr; opacity: 0; margin: 0 !important; }
+.lma-expand { animation: lma-expand-in 420ms var(--sd-ease-pop) both; }
+@keyframes lma-expand-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ---------- admin ---------- */
+.lma-admin { min-height: 100dvh; padding-bottom: 72px; background: var(--sd-canvas); color: var(--sd-ink); }
+.lma-admin-header { background: rgba(255,255,255,.9); border-bottom: 1.5px solid var(--sd-separator); }
+.lma-admin-header__inner { max-width: 1120px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 16px; }
+.lma-main { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.lma-page-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 48px 0 32px; }
+.lma-cols { display: flex; flex-wrap: wrap; gap: 28px 40px; align-items: flex-start; }
+.lma-col-main { flex: 999 1 560px; min-width: 0; }
+.lma-col-side { flex: 1 1 300px; display: flex; flex-direction: column; gap: 28px; min-width: 0; }
+.lma-tab--off { pointer-events: none; opacity: 1; color: var(--sd-text-3) !important; }
+
+/* stat chip exactly as A3 */
+.lma-stat { padding: 10px 14px; border: 1.5px solid var(--sd-outline); border-radius: 14px; background: #FFFFFF; box-shadow: 3px 3px 0 0 var(--sd-stat-wash), 3px 3px 0 1.5px var(--sd-outline); cursor: pointer; font-family: inherit; text-align: left; color: var(--sd-ink); transition: transform 420ms var(--sd-ease-pop); }
+.lma-stat[aria-selected="false"] { transform: translate(1px, 1px); }
+.lma-stat__label { font-size: 12px; font-weight: 800; }
+.lma-stat__value { font-size: 15px; font-weight: 800; margin-top: 2px; color: var(--sd-stat); transition: color 180ms var(--sd-ease-snap); }
+.lma-stat[aria-selected="true"] .lma-stat__value { color: var(--sd-ink); }
+
+/* centred sheet card on wide screens, bottom sheet on phones */
+.lma-sheet-card { position: absolute; left: 50%; bottom: 0; width: min(440px, 100%); transform: translateX(-50%); }
+@media (min-width: 700px) {
+  .lma-sheet-card { bottom: 48px; }
+}
+
+.lma-popover { position: absolute; z-index: 20; right: 0; top: calc(100% + 8px); min-width: 220px; }
+.lma-qr svg { display: block; width: 100%; height: auto; }
+
+/* ---------- empty state ---------- */
+.lma-empty { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 48px 16px; }
+.lma-empty__title { font-size: 18px; font-weight: 800; margin-top: 8px; }
+.lma-empty__body { font-size: 13px; font-weight: 600; color: var(--sd-text-2); line-height: 1.45; margin-top: 4px; max-width: 320px; }
+
+/* TV board: images never start the browser's own drag or long-press menu — the card does the dragging */
+.lma-tv img { -webkit-user-drag: none; user-select: none; pointer-events: none; -webkit-touch-callout: none; }
+.lma-tv { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }

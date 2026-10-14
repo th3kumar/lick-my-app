@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TV · Preload</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#0B0B0C;text-decoration:none}
+.dnum{font-size:62px;font-weight:900;letter-spacing:-0.04em;line-height:1;color:#FFFFFF;-webkit-text-stroke:2px #1A1A1C;text-shadow:4px 4px 0 #C9CEF0}
+.dunit{font-size:34px;font-weight:900;letter-spacing:-0.02em;line-height:1;color:#C9CEF0;-webkit-text-stroke:1.5px #1A1A1C}
+.cell{width:22px;height:22px;border-radius:4px;background:#C2A24C}
+.stat{padding:10px 14px;border:1.5px solid #1A1A1C;border-radius:14px;background:#FFFFFF;box-shadow:3px 3px 0 0 #C9CEF0, 3px 3px 0 1.5px #1A1A1C}
+.stat.off{transform:translate(1px,1px)}
+.key{background:#F0F0F3;border-radius:8px;padding:4px 10px;font-size:14px;font-weight:800}
+</style>
+</helmet>
+<div style="width: 1280px; height: 720px; overflow: hidden; font-family: Nunito, 'SF Pro Rounded', -apple-system, system-ui, sans-serif; color: #0B0B0C; background: #FFFFFF; padding: 44px 64px; display: flex; flex-direction: column">
+  <div style="display: flex; align-items: baseline; justify-content: space-between">
+    <div style="display: flex; align-items: baseline; gap: 12px"><span style="font-size: 18px; font-weight: 800; letter-spacing: -0.01em">Tier Night</span><span style="font-size: 15px; font-weight: 700; color: #6B6B70">[EVENT NAME]</span></div>
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 700; color: #6B6B70"><span class="key" style="color: #0B0B0C">Enter</span> starts the countdown</div>
+  </div>
+
+  <div style="flex: 1; display: flex; align-items: center; gap: 64px">
+    <div style="flex: 1; min-width: 0">
+      <div style="font-size: 16px; font-weight: 700; color: #6B6B70; padding-left: 4px">Tonight’s topic</div>
+      <h1 style="margin: 8px 0 0; font-size: 76px; font-weight: 900; letter-spacing: -0.035em; line-height: 1.02">[TOPIC]</h1>
+
+      <div style="margin-top: 36px">
+        <div style="display: flex; align-items: baseline; gap: 4px; padding: 10px 0 4px"><span class="dnum">18</span><span class="dunit">/18</span></div>
+        <div style="font-size: 16px; font-weight: 800; margin-top: 2px">Photos and clips ready</div>
+      </div>
+      <div aria-hidden="true" style="display: grid; grid-template-columns: repeat(18, 22px); gap: 4px; margin-top: 16px">
+        <span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 32px">
+        <div class="stat"><div style="font-size: 12px; font-weight: 800">Voters online</div><div style="font-size: 15px; font-weight: 800; margin-top: 2px">6 of 7</div></div>
+        <div class="stat off"><div style="font-size: 12px; font-weight: 800">Submitters</div><div style="font-size: 15px; font-weight: 800; margin-top: 2px; color: #9AA3E0">5 people</div></div>
+        <div class="stat off"><div style="font-size: 12px; font-weight: 800">Characters</div><div style="font-size: 15px; font-weight: 800; margin-top: 2px; color: #9AA3E0">14 tonight</div></div>
+      </div>
+    </div>
+
+    <div style="width: 320px; background: #FFFFFF; border: 1.5px solid #1A1A1C; border-radius: 20px; box-shadow: 5px 5px 0 0 rgb(223, 207, 162), 5px 5px 0 1.5px #1A1A1C; padding: 28px; display: flex; flex-direction: column; align-items: center; gap: 16px">
+      <div role="img" aria-label="Join QR code" style="width: 220px; height: 220px; border-radius: 12px; border: 1.5px solid #1A1A1C; background: repeating-linear-gradient(0deg, rgba(11,11,12,.10) 0 8px, rgba(11,11,12,0) 8px 16px), repeating-linear-gradient(90deg, rgba(11,11,12,.10) 0 8px, rgba(11,11,12,0) 8px 16px); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #6B6B70">QR</div>
+      <div style="text-align: center">
+        <div style="font-size: 19px; font-weight: 800; letter-spacing: -0.01em">Scan to vote</div>
+        <div style="font-size: 13px; font-weight: 600; color: #6B6B70; margin-top: 4px; line-height: 1.5">no app needed. pick a name and you’re in.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
