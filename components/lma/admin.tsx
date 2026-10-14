@@ -2,7 +2,7 @@
 // Admin shell: passcode gate + header (wordmark · admin tab bar · lock icon button).
 // Header markup: handoff/screens/p1h-admin-*.dc.html
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { NavLink } from "./nav";
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { CommitButton, cx, Icon } from "@/components/sundial";
@@ -10,6 +10,7 @@ import { GreyBanner } from "./ui";
 import * as api from "@/lib/lick-my-app/api";
 import { errorCode, errorCopy } from "@/lib/lick-my-app/copy";
 import { adminToken, flag, setAdminToken, setFlag } from "@/lib/lick-my-app/session";
+import { routes } from "@/lib/lick-my-app/routes";
 
 interface AdminState {
   token: string;
@@ -76,6 +77,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 /** Header lives in the layout so it stays mounted: the tab pill morphs (§02) and holds still during pushes. */
 function AdminChrome({ children }: { children: ReactNode }) {
   const path = usePathname();
+  const search = useSearchParams();
   const [remembered, setRemembered] = useState<string | null>(null);
   useEffect(() => {
     const sync = () => setRemembered(lastEvent());
@@ -83,10 +85,11 @@ function AdminChrome({ children }: { children: ReactNode }) {
     window.addEventListener("lma-admin-event", sync);
     return () => window.removeEventListener("lma-admin-event", sync);
   }, []);
-  if (/^\/admin\/events\/[^/]+\/show/.test(path)) return <>{children}</>; // the TV stage has no chrome
-  const m = path.match(/^\/admin\/events\/([^/]+)(?:\/([^/]+))?/);
-  const id = m && m[1] !== "new" ? m[1] : null;
-  const active: AdminTab = !m ? "events" : ((m[2] as AdminTab) ?? "details");
+  if (/^\/admin\/event\/show/.test(path)) return <>{children}</>; // the TV stage has no chrome
+  const m = path.match(/^\/admin\/event(?:\/([^/]+))?/);
+  const qid = search.get("id");
+  const id = m && qid && qid !== "new" ? qid : null;
+  const active: AdminTab = !m ? "events" : ((m[1] as AdminTab) ?? "details");
   return (
     <div className="lma-admin">
       <AdminHeader active={active} eventId={m ? id : remembered} />
@@ -142,12 +145,12 @@ function Gate({ onIn }: { onIn: (token: string) => void }) {
 export type AdminTab = "events" | "details" | "people" | "submissions" | "live" | "results";
 
 const TABS: { key: AdminTab; icon: string; label: string; path: (id: string) => string }[] = [
-  { key: "events", icon: "list", label: "Events", path: () => "/admin" },
-  { key: "details", icon: "sliders", label: "Details", path: (id) => `/admin/events/${id}` },
-  { key: "people", icon: "users", label: "People", path: (id) => `/admin/events/${id}/people` },
-  { key: "submissions", icon: "grid", label: "Submissions", path: (id) => `/admin/events/${id}/submissions` },
-  { key: "live", icon: "play", label: "Live control", path: (id) => `/admin/events/${id}/live` },
-  { key: "results", icon: "trophy", label: "Results", path: (id) => `/admin/events/${id}/results` },
+  { key: "events", icon: "list", label: "Events", path: () => routes.admin() },
+  { key: "details", icon: "sliders", label: "Details", path: (id) => routes.event(id) },
+  { key: "people", icon: "users", label: "People", path: (id) => routes.people(id) },
+  { key: "submissions", icon: "grid", label: "Submissions", path: (id) => routes.submissions(id) },
+  { key: "live", icon: "play", label: "Live control", path: (id) => routes.liveControl(id) },
+  { key: "results", icon: "trophy", label: "Results", path: (id) => routes.results(id) },
 ];
 
 /** Remembers the event the admin last worked on, so the tab bar has somewhere to go from /admin. */
@@ -196,7 +199,7 @@ export function AdminHeader({ active, eventId }: { active: AdminTab; eventId: st
           aria-label="Lock admin"
           onClick={() => {
             lock();
-            router.replace("/admin");
+            router.replace(routes.admin());
           }}
         >
           <Icon name="lock" size={18} />

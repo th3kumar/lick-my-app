@@ -10,6 +10,7 @@ import * as api from "@/lib/lick-my-app/api";
 import { errorCopy } from "@/lib/lick-my-app/copy";
 import { dayTime, montageSeconds, secs, weekday } from "@/lib/lick-my-app/format";
 import type { Character } from "@/lib/lick-my-app/types";
+import { routes, samePath } from "@/lib/lick-my-app/routes";
 
 export default function CharactersLayout({ children }: { children: React.ReactNode }) {
   const ok = useGuard("characters");
@@ -17,7 +18,7 @@ export default function CharactersLayout({ children }: { children: React.ReactNo
   const pathname = usePathname();
   const router = useRouter();
   const [menuFor, setMenuFor] = useState<Character | null>(null);
-  const sheetOpen = pathname !== `/e/${slug}/characters`;
+  const sheetOpen = !samePath(pathname, "/e/characters");
 
   if (!ok || !event || !me) return <PhoneFallback />;
 
@@ -41,7 +42,7 @@ export default function CharactersLayout({ children }: { children: React.ReactNo
           <div className="lma-nav">
             <span className="lma-wordmark">Lick My App</span>
             {canAdd ? (
-              <IconLink href={`/e/${slug}/characters/new`} dir="none" label="Add character" icon="plus" accent={accent} stroke={2.25} />
+              <IconLink href={routes.newCharacter(slug)} dir="none" label="Add character" icon="plus" accent={accent} stroke={2.25} />
             ) : (
               <span style={{ width: 40 }} />
             )}
@@ -59,7 +60,7 @@ export default function CharactersLayout({ children }: { children: React.ReactNo
                   i={i}
                   accent={accent}
                   locked={locked}
-                  onOpen={() => router.push(`/e/${slug}/characters/${c.id}`)}
+                  onOpen={() => router.push(routes.editCharacter(slug, c.id))}
                   onLongPress={() => setMenuFor(c)}
                 />
               ))}
@@ -67,7 +68,7 @@ export default function CharactersLayout({ children }: { children: React.ReactNo
           )}
 
           {canAdd && (
-            <WideLink href={`/e/${slug}/characters/new`} dir="none" glyph="⊕" accent={accent} style={{ marginTop: 20 }}>Add character</WideLink>
+            <WideLink href={routes.newCharacter(slug)} dir="none" glyph="⊕" accent={accent} style={{ marginTop: 20 }}>Add character</WideLink>
           )}
           <div className="sd-footer">
             {locked
@@ -155,7 +156,7 @@ function CardMenu({ c, onClose }: { c: Character; onClose: () => void }) {
         </div>
         <h2 className="sd-title-modal" style={{ margin: "0 0 24px" }}>{c.name}</h2>
         <div className="sd-group sd-hard">
-          <button type="button" className="sd-row lma-row-btn" onClick={() => { onClose(); router.push(`/e/${slug}/characters/${c.id}`); }}>
+          <button type="button" className="sd-row lma-row-btn" onClick={() => { onClose(); router.push(routes.editCharacter(slug, c.id)); }}>
             <span className="sd-row__label">Edit</span><span className="sd-row__chevron">›</span>
           </button>
           <button type="button" className="sd-row lma-row-btn" onClick={() => (confirm ? del() : setConfirm(true))}>

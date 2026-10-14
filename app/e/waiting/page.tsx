@@ -6,6 +6,7 @@ import { NavLink } from "@/components/lma/nav";
 import { Push, Stat, TipCard } from "@/components/lma/ui";
 import { countdownParts, timeOf, weekday } from "@/lib/lick-my-app/format";
 import { useNowMinute } from "@/lib/lick-my-app/hooks";
+import { routes } from "@/lib/lick-my-app/routes";
 
 export default function WaitingPage() {
   const ok = useGuard("waiting");
@@ -38,8 +39,8 @@ export default function WaitingPage() {
       <TipCard style={{ marginTop: 24 }} sign={`Keep this page open on ${day ?? "the night"}`} />
 
       <div className="sd-group sd-hard" style={accentStyle(accent, { marginTop: 24 })}>
-        {row(`/e/${slug}/rules`, "book", "How voting works")}
-        {!event.locked && row(`/e/${slug}/role`, "image", "Switch to submitter", true)}
+        {row(routes.rules(slug), "book", "How voting works")}
+        {!event.locked && row(routes.role(slug), "image", "Switch to submitter", true)}
       </div>
 
     </Push>

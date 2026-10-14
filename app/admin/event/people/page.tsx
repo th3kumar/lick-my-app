@@ -1,6 +1,6 @@
 "use client";
 // A3 · People — handoff/screens/p1h-admin-people.dc.html
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { accentStyle, CommitButton, Icon } from "@/components/sundial";
 import { AdminBlank, PageHead, rememberEvent, useAdmin } from "@/components/lma/admin";
@@ -12,6 +12,7 @@ import { errorCopy } from "@/lib/lick-my-app/copy";
 import { dayTime, initial } from "@/lib/lick-my-app/format";
 import { useEventChanges, usePresenceList } from "@/lib/lick-my-app/hooks";
 import type { AdminEvent, AdminPerson, Role } from "@/lib/lick-my-app/types";
+import { routes } from "@/lib/lick-my-app/routes";
 
 type Filter = null | "submitters" | "voters" | "online";
 type SheetKind = null | "add" | "rename" | "release" | "remove";
@@ -22,7 +23,7 @@ const ROLE_OPTIONS: { value: Role; label: string }[] = [
 ];
 
 export default function PeoplePage() {
-  const { id } = useParams<{ id: string }>();
+  const id = useSearchParams().get("id") ?? "";
   const router = useRouter();
   const { token, fail } = useAdmin();
   const [event, setEvent] = useState<AdminEvent | null>(() => peek(`event:${id}`));
@@ -36,7 +37,7 @@ export default function PeoplePage() {
   const load = useCallback(async () => {
     try {
       const [e, p] = await Promise.all([api.adminEvent(token, id), api.adminPeople(token, id)]);
-      if (!e) return router.replace("/admin");
+      if (!e) return router.replace(routes.admin());
       rememberEvent(e.id);
       setEvent(remember(`event:${id}`, e));
       setPeople(remember(`people:${id}`, p));

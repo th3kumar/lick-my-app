@@ -4,6 +4,7 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { haptic, NavLink, type NavDir } from "./nav";
 import { accentStyle, CommitButton, cx, Icon } from "@/components/sundial";
+import { routes } from "@/lib/lick-my-app/routes";
 
 /* ---------- §06 push — see nav.tsx (View Transitions). Push stays as the screen wrapper. ---------- */
 
@@ -136,13 +137,13 @@ export function PhoneTabBar({ slug, role, active }: { slug: string; role: "submi
   const tabs =
     role === "submitter"
       ? [
-          { key: "event", icon: "list", label: "Event", href: `/e/${slug}` },
-          { key: "characters", icon: "grid", label: "Characters", href: `/e/${slug}/characters` },
-          { key: "rules", icon: "book", label: "Rules", href: `/e/${slug}/rules` },
+          { key: "event", icon: "list", label: "Event", href: routes.hype(slug) },
+          { key: "characters", icon: "grid", label: "Characters", href: routes.characters(slug) },
+          { key: "rules", icon: "book", label: "Rules", href: routes.rules(slug) },
         ]
       : [
-          { key: "event", icon: "list", label: "Event", href: `/e/${slug}/waiting` },
-          { key: "rules", icon: "book", label: "Rules", href: `/e/${slug}/rules` },
+          { key: "event", icon: "list", label: "Event", href: routes.waiting(slug) },
+          { key: "rules", icon: "book", label: "Rules", href: routes.rules(slug) },
         ];
   return (
     <nav aria-label="Main" className="sd-tabbar sd-hard sd-hard--neutral sd-tabbar--floating lma-vt-tabbar">

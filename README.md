@@ -12,16 +12,19 @@ npm install
 npm run dev        # http://localhost:3001 (3000 is used by another project here)
 ```
 
-- Admin: `/admin`. The passcode was set when the database was created (ask whoever set it up). Change it from **Admin passcode ›** on the Events page.
-- Participants: the join link on each event card, `/e/<slug>`.
+- Live site: **https://th3kumar.github.io/lick-my-app/** (GitHub Pages; every push to `main` redeploys via `.github/workflows/pages.yml`).
+- Admin: `/admin/`. The passcode was set when the database was created (ask whoever set it up). Change it from **Admin passcode ›** on the Events page.
+- Participants: the join link on each event card, `/e/?s=<slug>`.
 
-`.env.local` holds the Supabase URL and publishable key. Both are public by design: all access goes through database functions that check a device token or the admin session.
+The app is a static export (`output: "export"`): every screen is a plain HTML page and all data comes from Supabase in the browser. Event / character ids ride in the query string (`?s=`, `?id=`, `?c=`) because static hosting has no server for dynamic paths. All URLs come from `lib/lick-my-app/routes.ts`.
+
+`.env.local` / `.env.production` hold the Supabase URL and publishable key. Both are public by design: all access goes through database functions that check a device token or the admin session.
 
 ## Status
 
 **Phase 1:** A1 Events · A2 Event details · A3 People · A4 Submissions · P1 Hype · P2 Username · P3 Role · P4 Rules · P5 New/edit character · P6 My characters · P7 Voter waiting.
 
-**Phase 2:** L1 Live control · L2 Results (PNG + CSV export) · TV T1–T8 at `/admin/events/[id]/show` · phone N1–N3 at `/e/[slug]/live`.
+**Phase 2:** L1 Live control · L2 Results (PNG + CSV export) · TV T1–T8 at `/admin/event/show/?id=<id>` · phone N1–N3 at `/e/live/?s=<slug>`.
 
 ## Running the show
 
@@ -36,7 +39,7 @@ npm run dev        # http://localhost:3001 (3000 is used by another project here
 ```
 app/                     routes (App Router) + sundial.css, motion.css, lma.css
   admin/…                A1–A4 (behind the passcode gate)
-  e/[slug]/…             P1–P7 (phone)
+  e/…                    P1–P7 + N1–N3 (phone)
 components/sundial.tsx   Sundial primitives (from the handoff)
 components/lma/          app pieces: phone + admin shells, character editor, crop stage, sheets
 lib/lick-my-app/         api (typed RPC), types, realtime hooks, uploads, formatting, colours, vote math

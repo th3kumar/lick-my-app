@@ -1,6 +1,6 @@
 "use client";
 // A2 · Event details — handoff/screens/p1h-admin-details.dc.html  (/admin/events/new creates)
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { accentStyle, CommitButton, cx, Icon, Toggle } from "@/components/sundial";
 import { AdminBlank, rememberEvent, useAdmin } from "@/components/lma/admin";
@@ -13,6 +13,7 @@ import { dayTime } from "@/lib/lick-my-app/format";
 import { useEventChanges } from "@/lib/lick-my-app/hooks";
 import { mediaPath, normalize, upload } from "@/lib/lick-my-app/upload";
 import { DEFAULT_SETTINGS, type AdminEvent, type AwardKey, type EventSettings, type Tier } from "@/lib/lick-my-app/types";
+import { routes } from "@/lib/lick-my-app/routes";
 
 type Form = api.EventInput;
 
@@ -53,7 +54,7 @@ const toLocalInput = (iso: string | null) => {
 };
 
 export default function EventDetailsPage() {
-  const { id } = useParams<{ id: string }>();
+  const id = useSearchParams().get("id") ?? "";
   const isNew = id === "new";
   const router = useRouter();
   const { token, fail } = useAdmin();
@@ -69,7 +70,7 @@ export default function EventDetailsPage() {
     if (isNew) return;
     try {
       const e = await api.adminEvent(token, id);
-      if (!e) return router.replace("/admin");
+      if (!e) return router.replace(routes.admin());
       setEvent(remember(`event:${id}`, e));
       rememberEvent(e.id);
       if (!dirty.current) setForm(fromEvent(e));
@@ -109,7 +110,7 @@ export default function EventDetailsPage() {
       setForm(fromEvent(saved));
       if (isNew) {
         rememberEvent(saved.id);
-        router.replace(`/admin/events/${saved.id}`);
+        router.replace(routes.event(saved.id));
       }
     } catch (e) {
       setProblem(fail(e));
@@ -118,7 +119,7 @@ export default function EventDetailsPage() {
   const discard = () => {
     dirty.current = false;
     setChanged(false);
-    if (isNew) go("/admin", { dir: "back" });
+    if (isNew) go(routes.admin(), { dir: "back" });
     else if (event) setForm(fromEvent(event));
   };
 
@@ -129,7 +130,7 @@ export default function EventDetailsPage() {
       <Push>
         <main className="lma-main">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "32px 0 18px" }}>
-            <BackLink href="/admin" label="Back to events" />
+            <BackLink href={routes.admin()} label="Back to events" />
             <div style={{ display: "flex", gap: 12 }}>
               <button className="sd-icon-btn sd-hard sd-press sd-icon-btn--cancel" type="button" aria-label="Discard changes" onClick={discard}>✕</button>
               <CommitButton label="Apply changes" enabled={valid && changed} onCommit={apply} />

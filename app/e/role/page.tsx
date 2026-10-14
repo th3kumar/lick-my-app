@@ -9,6 +9,7 @@ import * as api from "@/lib/lick-my-app/api";
 import { errorCopy } from "@/lib/lick-my-app/copy";
 import { weekday } from "@/lib/lick-my-app/format";
 import type { Role } from "@/lib/lick-my-app/types";
+import { routes } from "@/lib/lick-my-app/routes";
 
 export default function RolePage() {
   const ok = useGuard("role");
@@ -27,7 +28,7 @@ export default function RolePage() {
   // after the deadline: only a never-chosen voter can still pick, and only "voter"
   const canPick = (r: Role) => !locked || (me.role === null && r === "voter") || me.role === r;
   const day = weekday(event.starts_at)?.toLowerCase();
-  const back = me.role ? (me.role === "submitter" ? `/e/${slug}/characters` : `/e/${slug}/waiting`) : `/e/${slug}`;
+  const back = me.role ? (me.role === "submitter" ? routes.characters(slug) : routes.waiting(slug)) : routes.hype(slug);
 
   const commit = async () => {
     if (!pick) return;
@@ -35,7 +36,7 @@ export default function RolePage() {
     try {
       await api.setRole(token, pick);
       await refresh();
-      go(pick === "submitter" ? `/e/${slug}/rules` : `/e/${slug}/waiting`);
+      go(pick === "submitter" ? routes.rules(slug) : routes.waiting(slug));
     } catch (e) {
       setProblem(errorCopy(e));
     }

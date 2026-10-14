@@ -1,6 +1,6 @@
 "use client";
 // L1 · Live control — handoff/screens/p2h-admin-live.dc.html
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { accentStyle, arcChars, cx, Toggle } from "@/components/sundial";
 import { AdminBlank, rememberEvent, useAdmin } from "@/components/lma/admin";
@@ -13,6 +13,7 @@ import { useEventChanges, usePresenceList } from "@/lib/lick-my-app/hooks";
 import { cachedCount, mediaUrls, preload, revealOrder, shuffleTray } from "@/lib/lick-my-app/show";
 import { flag, setFlag } from "@/lib/lick-my-app/session";
 import type { Phase, ShowState } from "@/lib/lick-my-app/types";
+import { routes } from "@/lib/lick-my-app/routes";
 
 const STAGES: { key: Phase; label: string }[] = [
   { key: "draft", label: "Draft" },
@@ -34,7 +35,7 @@ const KEYS: [string, string][] = [
 ];
 
 export default function LiveControlPage() {
-  const { id } = useParams<{ id: string }>();
+  const id = useSearchParams().get("id") ?? "";
   const { token, fail } = useAdmin();
   const { go } = useNav();
   const [s, setS] = useState<ShowState | null>(() => peek(`show:${id}`));
@@ -95,7 +96,7 @@ export default function LiveControlPage() {
 
   const openTv = () => {
     document.documentElement.requestFullscreen?.().catch(() => {});
-    go(`/admin/events/${id}/show`);
+    go(routes.show(id));
   };
   const startShow = async () => {
     haptic(15);
@@ -105,7 +106,7 @@ export default function LiveControlPage() {
   const onArc = () => {
     if (phase === "pre" || phase === "draft") return startShow();
     if (phase === "countdown") return act(() => api.showPhase(token, id, "pre"));
-    if (phase === "done") return go(`/admin/events/${id}/results`);
+    if (phase === "done") return go(routes.results(id));
     openTv();
   };
 

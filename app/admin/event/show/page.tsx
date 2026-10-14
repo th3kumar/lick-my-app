@@ -4,7 +4,7 @@
 // voting (everyone online voted / timer ran out / Enter) and writes the verdict.
 
 import { AnimatePresence } from "motion/react";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAdmin } from "@/components/lma/admin";
 import { useNav } from "@/components/lma/nav";
@@ -15,12 +15,13 @@ import { useEventChanges, usePresenceList } from "@/lib/lick-my-app/hooks";
 import { cachedCount, mediaUrls, preload, revealOrder, shuffleTray, useSecondsLeft, useServerClock, useTicker } from "@/lib/lick-my-app/show";
 import { verdict, type HalfRounds } from "@/lib/lick-my-app/verdict";
 import type { ShowCharacter, ShowState } from "@/lib/lick-my-app/types";
+import { joinUrl, routes } from "@/lib/lick-my-app/routes";
 
 const REVEAL_MS = 2500;
 const MODES = ["mystery", "name", "photo"] as const;
 
 export default function ShowPage() {
-  const { id } = useParams<{ id: string }>();
+  const id = useSearchParams().get("id") ?? "";
   const { token, fail } = useAdmin();
   const { go } = useNav();
   const [s, setS] = useState<ShowState | null>(null);
@@ -93,7 +94,7 @@ export default function ShowPage() {
   const votingLeft = useSecondsLeft(s?.board_step === "voting" ? s.voting_closes_at : null, now);
   const countdownLeft = useSecondsLeft(s?.phase === "countdown" ? s.countdown_ends_at : null, now);
   const urls = useMemo(() => (s ? mediaUrls(s) : []), [s]);
-  const joinUrl = typeof window === "undefined" || !s ? "" : `${window.location.origin}/e/${s.slug}`;
+  const joinLink = s ? joinUrl(s.slug) : "";
   const revealPeople = useMemo(() => {
     if (!s) return [];
     const order = s.reveal_order ?? [];
@@ -272,7 +273,7 @@ export default function ShowPage() {
   const voterOnline: [number, number] = [s.people.filter((p) => online.has(p.id)).length, s.people.length];
 
   let screen: React.ReactNode;
-  if (s.phase === "pre" || s.phase === "draft") screen = <Preload s={s} ready={preloaded} total={urls.length} onlineVoters={voterOnline} joinUrl={joinUrl} />;
+  if (s.phase === "pre" || s.phase === "draft") screen = <Preload s={s} ready={preloaded} total={urls.length} onlineVoters={voterOnline} joinUrl={joinLink} />;
   else if (s.phase === "countdown") screen = <Countdown s={s} n={countdownLeft ?? s.settings.countdown_s} />;
   else if (s.phase === "reveal") screen = <Reveal s={s} order={revealPeople} index={Math.max(0, revealIndex)} />;
   else if (s.phase === "done") screen = <Final s={s} />;
@@ -283,7 +284,7 @@ export default function ShowPage() {
           s={s}
           laneOf={laneOf}
           verdictOpen={verdictOpen}
-          joinUrl={joinUrl}
+          joinUrl={joinLink}
           showQr={s.settings.board_qr !== false}
           canDrag={canDrag}
           onDrop={dropOn}
@@ -326,7 +327,7 @@ export default function ShowPage() {
       <button
         type="button"
         aria-label="Back to live control"
-        onClick={() => go(`/admin/events/${id}/live`, { dir: "back" })}
+        onClick={() => go(routes.liveControl(id), { dir: "back" })}
         style={{ position: "fixed", top: 8, left: 8, opacity: 0, width: 40, height: 40, border: "none", background: "transparent", cursor: "pointer" }}
         onFocus={(e) => (e.currentTarget.style.opacity = "1")}
         onBlur={(e) => (e.currentTarget.style.opacity = "0")}

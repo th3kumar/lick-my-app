@@ -3,6 +3,7 @@
 import { PhoneFallback, useGuard, usePhone } from "@/components/lma/phone";
 import { BackLink, Push, WideLink } from "@/components/lma/ui";
 import { dayTime } from "@/lib/lick-my-app/format";
+import { routes } from "@/lib/lick-my-app/routes";
 
 export default function RulesPage() {
   const ok = useGuard("rules");
@@ -11,12 +12,12 @@ export default function RulesPage() {
 
   const s = event.settings;
   const submitter = me.role === "submitter";
-  const back = submitter ? `/e/${slug}/characters` : `/e/${slug}/waiting`;
+  const back = submitter ? routes.characters(slug) : routes.waiting(slug);
 
   return (
     <Push className="lma-phone lma-phone--tabs">
       <div className="lma-nav">
-        <BackLink href={me.role ? back : `/e/${slug}/role`} />
+        <BackLink href={me.role ? back : routes.role(slug)} />
         <span className="lma-nav-caption">{event.topic}</span>
         <span style={{ width: 40 }} />
       </div>
@@ -52,7 +53,7 @@ export default function RulesPage() {
       )}
 
       {submitter && characters.length === 0 && !event.locked && (
-        <WideLink href={`/e/${slug}/characters/new`} dir="none" glyph="⊕" style={{ marginTop: 28 }}>Add my first character</WideLink>
+        <WideLink href={routes.newCharacter(slug)} dir="none" glyph="⊕" style={{ marginTop: 28 }}>Add my first character</WideLink>
       )}
 
     </Push>

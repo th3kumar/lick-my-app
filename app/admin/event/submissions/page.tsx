@@ -1,6 +1,6 @@
 "use client";
 // A4 · Submissions — handoff/screens/p1h-admin-submissions.dc.html
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { accentStyle, Icon, Toggle, useLongPress } from "@/components/sundial";
 import { AdminBlank, PageHead, rememberEvent, useAdmin } from "@/components/lma/admin";
@@ -14,11 +14,12 @@ import { dayTime, itemsLabel, montageSeconds, secs, weekdayShort } from "@/lib/l
 import { useEventChanges } from "@/lib/lick-my-app/hooks";
 import { mediaPath, upload } from "@/lib/lick-my-app/upload";
 import type { AdminEvent, AdminPerson, Character, Submissions } from "@/lib/lick-my-app/types";
+import { routes } from "@/lib/lick-my-app/routes";
 
 type Filter = { kind: "all" } | { kind: "person"; id: string } | { kind: "hidden" };
 
 export default function SubmissionsPage() {
-  const { id } = useParams<{ id: string }>();
+  const id = useSearchParams().get("id") ?? "";
   const router = useRouter();
   const { token, fail } = useAdmin();
   const [event, setEvent] = useState<AdminEvent | null>(() => peek(`event:${id}`));
@@ -35,7 +36,7 @@ export default function SubmissionsPage() {
   const load = useCallback(async () => {
     try {
       const [e, s, p] = await Promise.all([api.adminEvent(token, id), api.adminSubmissions(token, id), api.adminPeople(token, id)]);
-      if (!e) return router.replace("/admin");
+      if (!e) return router.replace(routes.admin());
       rememberEvent(e.id);
       setEvent(remember(`event:${id}`, e));
       setData(remember(`subs:${id}`, s));

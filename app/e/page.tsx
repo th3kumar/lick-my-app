@@ -7,6 +7,7 @@ import { Push, SheetFrame, Stat, WideLink } from "@/components/lma/ui";
 import { personAccent } from "@/lib/lick-my-app/colors";
 import { countdownParts, initial, plural, weekday } from "@/lib/lick-my-app/format";
 import { useNowMinute } from "@/lib/lick-my-app/hooks";
+import { routes } from "@/lib/lick-my-app/routes";
 
 export default function HypePage() {
   const ok = useGuard("hype");
@@ -52,7 +53,7 @@ export default function HypePage() {
       <Stat className="sd-anim-settle" style={{ marginTop: 24, ["--i" as string]: 3 }} parts={countdownParts(event.starts_at, now)} label="Until showtime" />
 
       {!joined && (
-        <WideLink href={`/e/${slug}/join`} className="lma-vt-join" style={{ marginTop: 28 }}>Join now</WideLink>
+        <WideLink href={routes.join(slug)} className="lma-vt-join" style={{ marginTop: 28 }}>Join now</WideLink>
       )}
 
       <div style={{ marginTop: "auto", paddingTop: 28 }}>

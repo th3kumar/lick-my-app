@@ -7,11 +7,12 @@ import { CharacterEditor, type EditorSave } from "./character-editor";
 import { SheetFrame, useSheetExit } from "./ui";
 import * as api from "@/lib/lick-my-app/api";
 import { mediaPath, upload } from "@/lib/lick-my-app/upload";
+import { routes } from "@/lib/lick-my-app/routes";
 
 export function PhoneCharacterSheet({ id }: { id: string | null }) {
   const router = useRouter();
   const { slug, event, token, characters, accent, refresh } = usePhone();
-  const list = `/e/${slug}/characters`;
+  const list = routes.characters(slug);
   const { exit, run } = useSheetExit(() => router.replace(list)); // the sheet already animated out
 
   const existing = id ? characters.find((c) => c.id === id) ?? null : null;

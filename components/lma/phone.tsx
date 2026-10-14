@@ -12,6 +12,7 @@ import { usePresence, useEventChanges } from "@/lib/lick-my-app/hooks";
 import { deviceToken, setDeviceToken } from "@/lib/lick-my-app/session";
 import type { Character, Me, PublicEvent } from "@/lib/lick-my-app/types";
 import { personAccent } from "@/lib/lick-my-app/colors";
+import { routes, samePath } from "@/lib/lick-my-app/routes";
 
 interface PhoneState {
   slug: string;
@@ -107,32 +108,31 @@ const LIVE_PHASES = ["countdown", "reveal", "board", "done"];
 function target(screen: Screen, s: PhoneState): string | null {
   const { slug, event, me } = s;
   if (!event) return null;
-  const base = `/e/${slug}`;
+  const base = routes.hype(slug);
   if (LIVE_PHASES.includes(event.phase)) {
     if (!me) return screen === "hype" || screen === "join" ? null : base; // late joiners scan, join as voters
-    return screen === "live" ? null : `${base}/live`;
+    return screen === "live" ? null : routes.live(slug);
   }
   if (screen === "live") return me ? home(s) : base;
   if (screen === "hype") {
     if (!me) return null;
-    if (!me.role) return `${base}/role`;
-    return me.role === "voter" ? `${base}/waiting` : null;
+    if (!me.role) return routes.role(slug);
+    return me.role === "voter" ? routes.waiting(slug) : null;
   }
   if (screen === "join") return me ? home(s) : null;
   if (!me) return base;
   if (screen === "role") return null;
-  if (!me.role) return `${base}/role`;
+  if (!me.role) return routes.role(slug);
   if (screen === "rules") return null;
-  if (screen === "characters") return me.role === "submitter" ? null : `${base}/waiting`;
-  if (screen === "waiting") return me.role === "voter" ? null : `${base}/characters`;
+  if (screen === "characters") return me.role === "submitter" ? null : routes.waiting(slug);
+  if (screen === "waiting") return me.role === "voter" ? null : routes.characters(slug);
   return null;
 }
 
 export function home(s: Pick<PhoneState, "slug" | "me">): string {
-  const base = `/e/${s.slug}`;
-  if (!s.me) return base;
-  if (!s.me.role) return `${base}/role`;
-  return s.me.role === "submitter" ? `${base}/characters` : `${base}/waiting`;
+  if (!s.me) return routes.hype(s.slug);
+  if (!s.me.role) return routes.role(s.slug);
+  return s.me.role === "submitter" ? routes.characters(s.slug) : routes.waiting(s.slug);
 }
 
 /** Returns true once the screen may render. Redirects otherwise. */
@@ -142,7 +142,9 @@ export function useGuard(screen: Screen): boolean {
   const pathname = usePathname();
   const to = s.ready ? target(screen, s) : null;
   useEffect(() => {
-    if (to && to !== pathname) go(to, { replace: true, dir: to.length < pathname.length ? "back" : "forward" });
+    if (!to) return;
+    const toPath = to.split("?")[0];
+    if (!samePath(toPath, pathname)) go(to, { replace: true, dir: toPath.length < pathname.length ? "back" : "forward" });
   }, [to, pathname, go]);
   // once a screen has shown, keep it on screen while a redirect slides the next one in
   const shown = useRef(false);

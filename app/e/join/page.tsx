@@ -9,6 +9,7 @@ import { errorCopy } from "@/lib/lick-my-app/copy";
 import { weekday } from "@/lib/lick-my-app/format";
 import { useDebounced } from "@/lib/lick-my-app/hooks";
 import { flag, setFlag } from "@/lib/lick-my-app/session";
+import { routes } from "@/lib/lick-my-app/routes";
 
 export default function UsernamePage() {
   const ok = useGuard("join");
@@ -54,7 +55,7 @@ export default function UsernamePage() {
   return (
     <Push className="lma-phone">
       <div className="lma-nav">
-        <BackLink href={`/e/${slug}`} />
+        <BackLink href={routes.hype(slug)} />
         <CommitButton label="Continue" enabled={lengthOk && uniqueOk} onCommit={commit} />
       </div>
       <h1 className="sd-title-screen">Pick a username</h1>

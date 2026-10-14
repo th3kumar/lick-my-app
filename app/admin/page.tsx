@@ -11,8 +11,8 @@ import * as api from "@/lib/lick-my-app/api";
 import { dayTime, eventDate, weekday } from "@/lib/lick-my-app/format";
 import { flag, setFlag } from "@/lib/lick-my-app/session";
 import type { AdminEvent } from "@/lib/lick-my-app/types";
+import { joinUrl, routes } from "@/lib/lick-my-app/routes";
 
-const joinUrl = (slug: string) => (typeof window === "undefined" ? `/e/${slug}` : `${window.location.origin}/e/${slug}`);
 
 export default function EventsPage() {
   const { token, fail } = useAdmin();
@@ -61,7 +61,7 @@ export default function EventsPage() {
         <main className="lma-main">
           <div className="lma-page-head">
             <h1 className="sd-title-screen">Events</h1>
-            <NavLink className="sd-btn sd-hard sd-press" href="/admin/events/new">
+            <NavLink className="sd-btn sd-hard sd-press" href={routes.newEvent()}>
               <Icon name="plus" size={17} stroke={2.25} />New event
             </NavLink>
           </div>
@@ -88,7 +88,7 @@ export default function EventsPage() {
               <Icon name="calendar" size={24} />
               <div className="lma-empty__title">No events yet!</div>
               <div className="lma-empty__body">set up the night: a topic, a start time and the tiers. you’ll get a join link to share.</div>
-              <NavLink className="sd-btn sd-hard sd-press" href="/admin/events/new" style={{ marginTop: 16 }}>
+              <NavLink className="sd-btn sd-hard sd-press" href={routes.newEvent()} style={{ marginTop: 16 }}>
                 <Icon name="plus" size={17} stroke={2.25} />New event
               </NavLink>
             </div>
@@ -105,7 +105,7 @@ export default function EventsPage() {
                           e={e}
                           i={i}
                           onQr={() => setQrFor(e)}
-                          onDuplicate={() => act(async () => go(`/admin/events/${await api.adminDuplicateEvent(token, e.id)}`))}
+                          onDuplicate={() => act(async () => go(routes.event(await api.adminDuplicateEvent(token, e.id))))}
                           onArchive={() => act(() => api.adminArchiveEvent(token, e.id, true))}
                           onDelete={() => act(() => api.adminDeleteEvent(token, e.id))}
                         />
@@ -227,7 +227,7 @@ function UpcomingCard({ e, i, onQr, onDuplicate, onArchive, onDelete }: {
       // the settle animation's transform makes each card its own stacking context — lift the open one
       style={accentStyle(e.accent, { borderRadius: 16, ["--i" as string]: i, position: "relative", zIndex: menu ? 10 : undefined })}
     >
-      <NavLink href={`/admin/events/${e.id}`} onClick={() => rememberEvent(e.id)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px" }}>
+      <NavLink href={routes.event(e.id)} onClick={() => rememberEvent(e.id)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px" }}>
         <span className="sd-token"><Icon name="list" size={19} /></span>
         <span style={{ flex: 1, minWidth: 0 }}>
           <span style={{ display: "block", fontSize: 19, fontWeight: 800, letterSpacing: "-0.01em", lineHeight: 1.1, viewTransitionName: `lma-event-${e.id}`, width: "fit-content" }}>{e.name}</span>
@@ -288,7 +288,7 @@ function UpcomingCard({ e, i, onQr, onDuplicate, onArchive, onDelete }: {
 function PastCard({ e, i }: { e: AdminEvent; i: number }) {
   return (
     <NavLink
-      href={`/admin/events/${e.id}/results`}
+      href={routes.results(e.id)}
       onClick={() => rememberEvent(e.id)}
       className="sd-card sd-hard sd-press sd-anim-settle"
       style={accentStyle(e.accent, { ["--i" as string]: i })}

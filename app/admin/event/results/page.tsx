@@ -1,6 +1,6 @@
 "use client";
 // L2 · Results — handoff/screens/p2h-admin-results.dc.html
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { accentStyle, Icon } from "@/components/sundial";
 import { AdminBlank, rememberEvent, useAdmin } from "@/components/lma/admin";
@@ -13,11 +13,12 @@ import { useEventChanges } from "@/lib/lick-my-app/hooks";
 import { AWARD_META, awardCards, characterRows, csv } from "@/lib/lick-my-app/results";
 import { useLocalMedia } from "@/lib/lick-my-app/show";
 import type { ShowCharacter, ShowState } from "@/lib/lick-my-app/types";
+import { routes } from "@/lib/lick-my-app/routes";
 
 const wash = (c: string, a = 22) => `color-mix(in srgb, ${c} ${a}%, transparent)`;
 
 export default function ResultsPage() {
-  const { id } = useParams<{ id: string }>();
+  const id = useSearchParams().get("id") ?? "";
   const { token, fail } = useAdmin();
   const { go } = useNav();
   const [s, setS] = useState<ShowState | null>(() => peek(`show:${id}`));
@@ -216,7 +217,7 @@ export default function ResultsPage() {
           body="clears every claim, vote and verdict so you can run the show again. characters and people stay."
           commitLabel="Reset to pre-show"
           onClose={() => setConfirmReset(false)}
-          onCommit={() => api.showReset(token, id).then(() => go(`/admin/events/${id}/live`, { dir: "back" }))}
+          onCommit={() => api.showReset(token, id).then(() => go(routes.liveControl(id), { dir: "back" }))}
         />
       )}
     </>
