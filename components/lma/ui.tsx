@@ -183,7 +183,7 @@ export function TipArt({ slot, ratio = "327 / 88", radius = 10, style }: { slot:
 /** Teal tip card: art on top, uppercase sign below. */
 export function TipCard({ sign, slot, style }: { sign: string; slot: Exclude<TipSlot, "hype-banner">; style?: CSSProperties }) {
   return (
-    <div style={{ background: "#7FD8DE", border: "1.5px solid #1A1A1C", borderRadius: 16, padding: 14, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, ...style }}>
+    <div style={{ background: "#FFFFFF", border: "1.5px solid #1A1A1C", borderRadius: 16, padding: 14, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, ...style }}>
       <TipArt slot={slot} />
       <div style={{ background: "#FFFFFF", border: "1.5px solid #1A1A1C", borderRadius: 8, padding: "7px 12px", fontSize: 13, fontWeight: 800, textTransform: "uppercase" }}>{sign}</div>
     </div>

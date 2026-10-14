@@ -8,7 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AdminMissing, forgetEvent, useAdmin } from "@/components/lma/admin";
 import { useNav } from "@/components/lma/nav";
-import { Board, Countdown, Final, Montage, Preload, Reveal, Verdict, Voting } from "@/components/lma/tv-screens";
+import { Board, Countdown, Final, Montage, Preload, Reveal, Verdict, Voting, type MontageState } from "@/components/lma/tv-screens";
 import * as api from "@/lib/lick-my-app/api";
 import { errorCode } from "@/lib/lick-my-app/copy";
 import { useEventChanges, usePresenceList } from "@/lib/lick-my-app/hooks";
@@ -29,7 +29,7 @@ export default function ShowPage() {
   const [scale, setScale] = useState(1);
   const [drawer, setDrawer] = useState(true);
   const [verdictFor, setVerdictFor] = useState<string | null>(null); // T7 shown for this character
-  const [montage, setMontage] = useState({ index: 0, playing: true });
+  const [montage, setMontage] = useState<MontageState>({ index: 0, playing: true, ended: false, nonce: 0 });
   const [preloaded, setPreloaded] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
   const [optimistic, setOptimistic] = useState<{ id: string; tier: number } | null>(null); // dropped, server not back yet
@@ -140,7 +140,7 @@ export default function ShowPage() {
   }, [s?.phase, revealIndex, revealPeople.length, act, token, id]);
 
   useEffect(() => {
-    if (s?.board_step === "montage") setMontage({ index: 0, playing: true });
+    if (s?.board_step === "montage") setMontage({ index: 0, playing: true, ended: false, nonce: 0 });
   }, [s?.board_step, current?.id]);
 
   // voting closes: everyone online voted, timer ran out
@@ -169,6 +169,29 @@ export default function ShowPage() {
     return () => clearTimeout(t);
   }, [verdictFor]);
   const verdictOpen = !!s && s.board_step === "verdict" && !!current && verdictFor === current.id;
+
+  /* ---------- montage controls (on-screen buttons + Space / ← →). Nothing ends it on its own. ---------- */
+  const mediaCount = current?.media.length ?? 0;
+  const montageCtl = useMemo(
+    () => ({
+      // a photo's 4s / a clip ran out: next item, or hold on the last one
+      itemEnded: () =>
+        setMontage((m) => (m.index + 1 < mediaCount ? { ...m, index: m.index + 1 } : { ...m, playing: false, ended: true })),
+      toggle: () =>
+        setMontage((m) => (m.ended ? { index: 0, playing: true, ended: false, nonce: m.nonce + 1 } : { ...m, playing: !m.playing })),
+      next: () =>
+        setMontage((m) => (m.ended ? m : m.index + 1 < mediaCount ? { ...m, index: m.index + 1 } : { ...m, playing: false, ended: true })),
+      prev: () =>
+        setMontage((m) =>
+          m.ended
+            ? { ...m, ended: false, playing: true, nonce: m.nonce + 1 }
+            : m.index > 0
+              ? { ...m, index: m.index - 1, playing: true }
+              : { ...m, nonce: m.nonce + 1, playing: true },
+        ),
+    }),
+    [mediaCount],
+  );
 
   /* ---------- keyboard (only here, never while typing) ---------- */
   useEffect(() => {
@@ -235,19 +258,18 @@ export default function ShowPage() {
       }
       if (k === " ") {
         handled();
-        if (step === "montage") return setMontage((m) => ({ ...m, playing: !m.playing }));
+        if (step === "montage") return montageCtl.toggle();
         if (step === "claimed") return act(() => api.showMontage(token, id, true));
         return;
       }
       if (step === "montage" && current && (k === "ArrowRight" || k === "ArrowLeft")) {
         handled();
-        const n = current.media.length;
-        return setMontage((m) => ({ index: Math.max(0, Math.min(n - 1, m.index + (k === "ArrowRight" ? 1 : -1))), playing: m.playing }));
+        return k === "ArrowRight" ? montageCtl.next() : montageCtl.prev();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [s, current, act, token, id, start, verdictOpen]);
+  }, [s, current, act, token, id, start, verdictOpen, montageCtl]);
 
   /* ---------- render ---------- */
   if (missing) return <AdminMissing />;
@@ -305,11 +327,12 @@ export default function ShowPage() {
               key={`m-${current.id}`}
               s={s}
               c={current}
-              index={montage.index}
-              playing={montage.playing}
-              setIndex={(i) => setMontage((m) => ({ ...m, index: i }))}
-              setPlaying={(p) => setMontage((m) => ({ ...m, playing: p }))}
-              onFinish={() => act(() => api.showOpenVoting(token, id))}
+              m={montage}
+              onItemEnd={montageCtl.itemEnded}
+              onToggle={montageCtl.toggle}
+              onPrev={montageCtl.prev}
+              onNext={montageCtl.next}
+              onVote={() => act(() => api.showOpenVoting(token, id))}
               onClose={() => act(() => api.showMontage(token, id, false))}
             />
           )}

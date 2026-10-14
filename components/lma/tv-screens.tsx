@@ -577,73 +577,114 @@ export function Board({ s, laneOf, verdictOpen, joinUrl, showQr, canDrag, onPick
 
 /* ---------------- T5 · Montage ---------------- */
 
-export function Montage({ s, c, playing, index, setIndex, setPlaying, onFinish, onClose }: {
-  s: ShowState; c: ShowCharacter; playing: boolean; index: number; setIndex: (i: number) => void; setPlaying: (p: boolean) => void;
-  /** last photo / clip finished (or "Start voting" pressed): voting opens */
-  onFinish: () => void;
+export interface MontageState {
+  index: number;
+  playing: boolean;
+  ended: boolean; // last item finished: holds on it until the admin opens voting
+  nonce: number; // bump to restart the current item
+}
+
+const glyph = {
+  prev: <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2v14H6zM19 5v14L9 12z" /></svg>,
+  next: <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 5h2v14h-2zM5 5v14l10-7z" /></svg>,
+  play: <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5l11 7-11 7z" /></svg>,
+  pause: <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" /></svg>,
+  replay: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" /></svg>,
+};
+
+/** T5. The admin runs it: nothing ends on its own — after the last item it holds and waits for "Open voting". */
+export function Montage({ s, c, m, onItemEnd, onToggle, onPrev, onNext, onClose, onVote }: {
+  s: ShowState;
+  c: ShowCharacter;
+  m: MontageState;
+  onItemEnd: () => void; // current photo's 4s / clip finished
+  onToggle: () => void;
+  onPrev: () => void;
+  onNext: () => void;
   onClose: () => void;
+  onVote: () => void;
 }) {
   const owner = s.people.find((p) => p.id === c.owner_id);
   const accent = personAccent(owner?.join_index ?? 0);
   const items = c.media;
-  const item = items[index];
+  const item = items[m.index];
   const src = useLocalMedia(item?.url);
   const thumb = useLocalMedia(c.thumb_url);
   const video = useRef<HTMLVideoElement>(null);
-  const [t, setT] = useState(0); // seconds into the current item
-  const startedAt = useRef<number | null>(null);
-  const base = useRef(0);
-  useTicker(playing && item?.kind === "image", 100);
+  const [t, setT] = useState(0); // seconds into the current item (photo clock or clip time)
+  const reported = useRef(false);
 
-  // image clock
+  // a new item (or a restart) starts at zero
   useEffect(() => {
     setT(0);
-    base.current = 0;
-    startedAt.current = playing ? performance.now() : null;
-  }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
+    reported.current = false;
+  }, [m.index, m.nonce]);
+
+  // photo clock: only runs while playing, so a pause holds the photo as long as it needs
   useEffect(() => {
-    if (item?.kind !== "image") return;
-    if (playing) startedAt.current = performance.now();
-    else if (startedAt.current) {
-      base.current += (performance.now() - startedAt.current) / 1000;
-      startedAt.current = null;
-    }
-  }, [playing, item?.kind]);
-  const imageT = item?.kind === "image" ? Math.min(4, base.current + (startedAt.current ? (performance.now() - startedAt.current) / 1000 : 0)) : 0;
+    if (!m.playing || m.ended || item?.kind !== "image") return;
+    let last = performance.now();
+    const h = setInterval(() => {
+      const now = performance.now();
+      const step = (now - last) / 1000; // measured here, not inside the (deferred) updater
+      last = now;
+      setT((x) => Math.min(4, x + step));
+    }, 100);
+    return () => clearInterval(h);
+  }, [m.playing, m.ended, item?.kind, m.index, m.nonce]);
   useEffect(() => {
-    if (item?.kind === "image" && imageT >= 4 && playing) {
-      if (index + 1 < items.length) setIndex(index + 1);
-      else {
-        setPlaying(false);
-        onFinish();
-      }
+    if (item?.kind === "image" && t >= 4 && !reported.current) {
+      reported.current = true;
+      onItemEnd();
     }
-  });
+  }, [t, item?.kind]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // clips follow play / pause
   useEffect(() => {
     const v = video.current;
     if (!v) return;
-    if (playing) v.play().catch(() => {});
+    if (m.playing && !m.ended) v.play().catch(() => {});
     else v.pause();
-  }, [playing, src]);
+  }, [m.playing, m.ended, src, m.nonce]);
 
-  const cur = item?.kind === "video" ? t : imageT;
-  const durations = items.map((m) => (m.kind === "image" ? 4 : Number(m.duration_s) || 1));
+  const durations = items.map((x) => (x.kind === "image" ? 4 : Number(x.duration_s) || 1));
   const total = durations.reduce((a, b) => a + b, 0);
-  const elapsed = durations.slice(0, index).reduce((a, b) => a + b, 0) + cur;
+  const elapsed = m.ended ? total : durations.slice(0, m.index).reduce((a, b) => a + b, 0) + t;
   const fmt = (x: number) => `${Math.floor(x / 60)}:${String(Math.floor(x % 60)).padStart(2, "0")}`;
   const claimed = tierOf(s.tiers, c.claimed_tier);
-  const [showPause, setShowPause] = useState(false);
+  const [flash, setFlash] = useState(false); // ▶ / ⏸ pops in the middle on toggle, gone after 900ms
+  const first = useRef(true);
   useEffect(() => {
-    setShowPause(true);
-    if (!playing) return;
-    const h = setTimeout(() => setShowPause(false), 900);
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    setFlash(true);
+    const h = setTimeout(() => setFlash(false), 900);
     return () => clearTimeout(h);
-  }, [playing]);
+  }, [m.playing]);
+
+  const ctl = (label: string, key: string, onClick: () => void, icon: ReactNode, big?: boolean, disabled?: boolean) => (
+    <button
+      type="button"
+      aria-label={`${label} (${key})`}
+      title={`${label} · ${key}`}
+      disabled={disabled}
+      onClick={onClick}
+      className={disabled ? "sd-hard sd-disabled" : "sd-hard sd-press"}
+      style={{ ...accentStyle(accent), width: big ? 56 : 44, height: big ? 56 : 44, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", padding: 0, color: "#0B0B0C", flexShrink: 0 }}
+    >
+      {icon}
+    </button>
+  );
 
   return (
     <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1, transition: T.sheet }} exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.3, ease: EASE.sheet } }} style={{ position: "absolute", inset: 0, width: 1280, height: 720, background: "#FFFFFF", overflow: "hidden" }}>
-      {/* media letterboxes onto the owner-tinted hatch (the reference's media ground), never black */}
-      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: `repeating-linear-gradient(135deg, ${wash(accent, 16)} 0 14px, ${wash(accent, 6)} 14px 28px)` }}>
+      {/* media letterboxes onto the owner-tinted hatch (the reference's media ground), never black. Tap = play / pause */}
+      <div
+        onClick={() => items.length && onToggle()}
+        style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: `repeating-linear-gradient(135deg, ${wash(accent, 16)} 0 14px, ${wash(accent, 6)} 14px 28px)`, cursor: items.length ? "pointer" : "default" }}
+      >
         {!items.length && (
           <div style={{ textAlign: "center" }}>
             {thumb && (
@@ -651,28 +692,24 @@ export function Montage({ s, c, playing, index, setIndex, setPlaying, onFinish, 
               <img src={thumb} alt="" style={{ width: 360, height: 360, borderRadius: 20, border: `1.5px solid ${INK}`, objectFit: "cover", boxShadow: shadow(accent, 5) }} />
             )}
             <div style={{ fontSize: 15, fontWeight: 700, color: "#6B6B70", marginTop: 24 }}>no montage — {owner?.username} defends it live</div>
-            <button type="button" onClick={onFinish} className="sd-btn sd-hard sd-press" style={{ marginTop: 20, ["--accent" as string]: accent } as CSSProperties}>
-              Start voting
-            </button>
           </div>
         )}
         {item?.kind === "image" && src && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={src} src={src} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", animation: "sd-scrim-in 180ms var(--sd-ease-snap) both" }} />
+          <img key={`${src}-${m.nonce}`} src={src} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", animation: "sd-scrim-in 180ms var(--sd-ease-snap) both" }} />
         )}
         {item?.kind === "video" && src && (
           <video
-            key={src}
+            key={`${src}-${m.nonce}`}
             ref={video}
             src={src}
             playsInline
-            autoPlay={playing}
+            autoPlay={m.playing && !m.ended}
             onTimeUpdate={(e) => setT(e.currentTarget.currentTime)}
             onEnded={() => {
-              if (index + 1 < items.length) setIndex(index + 1);
-              else {
-                setPlaying(false);
-                onFinish();
+              if (!reported.current) {
+                reported.current = true;
+                onItemEnd();
               }
             }}
             style={{ width: "100%", height: "100%", objectFit: "contain" }}
@@ -684,7 +721,7 @@ export function Montage({ s, c, playing, index, setIndex, setPlaying, onFinish, 
         <div style={{ position: "absolute", top: 24, left: 32, right: 32, display: "flex", gap: 6 }}>
           {durations.map((d, i) => (
             <span key={i} style={{ flex: d, height: 10, borderRadius: 4, border: `1.5px solid ${INK}`, background: "#E9E9EC", overflow: "hidden" }}>
-              <span style={{ display: "block", height: "100%", width: `${i < index ? 100 : i === index ? Math.min(100, (cur / d) * 100) : 0}%`, background: accent }} />
+              <span style={{ display: "block", height: "100%", width: `${m.ended || i < m.index ? 100 : i === m.index ? Math.min(100, (t / d) * 100) : 0}%`, background: accent }} />
             </span>
           ))}
         </div>
@@ -704,31 +741,64 @@ export function Montage({ s, c, playing, index, setIndex, setPlaying, onFinish, 
         <TierToken t={claimed} size={40} font={17} />
       </div>
 
+      {/* ▶ / ⏸ flash in the middle when toggled */}
       <AnimatePresence>
-        {showPause && items.length > 0 && (
+        {flash && !m.ended && items.length > 0 && (
           <motion.span
-            key={playing ? "play" : "pause"}
+            key={m.playing ? "play" : "pause"}
             initial={{ scale: 0.6, opacity: 0 }}
             animate={{ scale: 1, opacity: 1, transition: T.pop }}
             exit={{ opacity: 0, transition: T.snap }}
-            style={{ position: "absolute", left: "50%", top: "50%", marginLeft: -36, marginTop: -36, width: 72, height: 72, borderRadius: 999, background: "#FFFFFF", border: `1.5px solid ${INK}`, boxShadow: shadow(accent), fontSize: 26, display: "flex", alignItems: "center", justifyContent: "center" }}
+            style={{ position: "absolute", left: "50%", top: "50%", marginLeft: -36, marginTop: -36, width: 72, height: 72, borderRadius: 999, background: "#FFFFFF", border: `1.5px solid ${INK}`, boxShadow: shadow(accent), display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}
           >
-            {playing ? "▶" : "⏸"}
+            {m.playing ? glyph.play : glyph.pause}
           </motion.span>
         )}
       </AnimatePresence>
 
-      <div style={{ position: "absolute", bottom: 28, left: 32, display: "flex", gap: 18, alignItems: "center", padding: "12px 16px", background: "#FFFFFF", border: `1.5px solid ${INK}`, borderRadius: 16, boxShadow: shadow(accent) }}>
-        <Key k="Space" onClick={() => setPlaying(!playing)}>play / pause</Key>
-        <Key k="← →" onClick={() => setIndex(Math.min(items.length - 1, index + 1))}>slides</Key>
-        <Key k="Esc" onClick={onClose}>close</Key>
-        <Key k="V" onClick={onFinish}>open voting</Key>
+      {/* end of the montage: hold here until the admin opens voting */}
+      <AnimatePresence>
+        {(m.ended || !items.length) && (
+          <motion.div
+            key="end"
+            initial={{ y: 16, opacity: 0 }}
+            animate={{ y: 0, opacity: 1, transition: T.sheet }}
+            exit={{ opacity: 0, transition: T.snap }}
+            style={{ position: "absolute", left: 0, right: 0, bottom: 120, display: "flex", justifyContent: "center", pointerEvents: "none" }}
+          >
+            <div style={{ background: "#FFFFFF", border: `1.5px solid ${INK}`, borderRadius: 16, boxShadow: shadow(accent, 5), padding: "14px 20px", textAlign: "center", pointerEvents: "auto" }}>
+              <div style={{ fontSize: 19, fontWeight: 800 }}>{items.length ? "That’s the montage" : `${owner?.username ?? "The owner"} has the floor`}</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#6B6B70", marginTop: 2 }}>open voting when the room is ready · V</div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* the admin's controls (also Space · ← → · Esc · V) */}
+      <div style={{ position: "absolute", bottom: 28, left: 32, display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: "#FFFFFF", border: `1.5px solid ${INK}`, borderRadius: 999, boxShadow: shadow(accent) }}>
+        {items.length > 0 && (
+          <>
+            {ctl("Previous", "←", onPrev, glyph.prev)}
+            {ctl(m.ended ? "Play again" : m.playing ? "Pause" : "Play", "Space", onToggle, m.ended ? glyph.replay : m.playing ? glyph.pause : glyph.play, true)}
+            {ctl("Next", "→", onNext, glyph.next, false, m.ended)}
+            <span aria-hidden="true" style={{ width: 1.5, height: 32, background: "#E6E6EA", margin: "0 4px" }} />
+          </>
+        )}
+        <button type="button" onClick={onClose} title="Close · Esc" className="sd-chip sd-hard sd-hard--chip sd-press" style={{ ...accentStyle(accent), padding: "9px 14px" }}>
+          Close <span style={{ background: "#F0F0F3", borderRadius: 6, padding: "1px 6px", fontSize: 12, fontWeight: 800 }}>Esc</span>
+        </button>
+        <span style={{ position: "relative", display: "inline-flex", isolation: "isolate" }}>
+          {(m.ended || !items.length) && <span className="sd-commit-halo" aria-hidden="true" style={{ borderRadius: 14, background: `color-mix(in srgb, ${accent} 55%, transparent)` }} />}
+          <button type="button" onClick={onVote} title="Open voting · V" className={m.ended || !items.length ? "sd-btn sd-hard sd-press sd-anim-ready" : "sd-btn sd-hard sd-press"} style={{ ...accentStyle(accent), padding: "11px 18px", gap: 10 }}>
+            Open voting <span style={{ background: "#F0F0F3", borderRadius: 6, padding: "1px 6px", fontSize: 12, fontWeight: 800 }}>V</span>
+          </button>
+        </span>
       </div>
 
       {items.length > 0 && (
         <div style={{ position: "absolute", bottom: 28, right: 32, padding: "12px 18px", textAlign: "right", background: "#FFFFFF", border: `1.5px solid ${INK}`, borderRadius: 16, boxShadow: shadow(accent) }}>
           <div style={{ fontSize: 17, fontWeight: 800, color: accent }}>{fmt(elapsed)}</div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#6B6B70" }}>of {fmt(total)} · {item?.kind === "video" ? "clip" : "photo"} {index + 1} of {items.length}</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#6B6B70" }}>of {fmt(total)} · {item?.kind === "video" ? "clip" : "photo"} {Math.min(m.index + 1, items.length)} of {items.length}{m.ended ? " · done" : !m.playing ? " · paused" : ""}</div>
         </div>
       )}
     </motion.div>

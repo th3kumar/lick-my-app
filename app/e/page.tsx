@@ -5,7 +5,7 @@ import { Icon } from "@/components/sundial";
 import { PhoneFallback, useGuard, usePhone } from "@/components/lma/phone";
 import { Push, SheetFrame, Stat, TipArt, WideLink } from "@/components/lma/ui";
 import { personAccent } from "@/lib/lick-my-app/colors";
-import { countdownParts, initial, plural, weekday } from "@/lib/lick-my-app/format";
+import { countdownParts, dayTime, initial, plural, weekday } from "@/lib/lick-my-app/format";
 import { useNowMinute } from "@/lib/lick-my-app/hooks";
 import { routes } from "@/lib/lick-my-app/routes";
 
@@ -37,21 +37,37 @@ export default function HypePage() {
           style={{ height: 148, width: "100%", objectFit: "cover", borderRadius: 16, display: "block" }}
         />
       ) : (
-        // default banner art (no upload): 355 × 145 on the tip-card teal, inside the same hard-shadow card
-        <div className="sd-hard sd-anim-settle" style={{ height: 148, borderRadius: 16, background: "#7FD8DE", overflow: "hidden" }}>
+        // default banner art (no upload): 355 × 145 on white, inside the same hard-shadow card
+        <div className="sd-hard sd-anim-settle" style={{ height: 148, borderRadius: 16, background: "#FFFFFF", overflow: "hidden" }}>
           <TipArt slot="hype-banner" ratio="355 / 145" radius={0} style={{ height: "100%" }} />
         </div>
       )}
 
-      <div className="sd-anim-settle" style={{ fontSize: 13, fontWeight: 700, color: "#6B6B70", marginTop: 28, paddingLeft: 4, ["--i" as string]: 1 }}>
+      {/* the event itself: name, when, where */}
+      <div className="sd-anim-settle" style={{ marginTop: 20, padding: "0 4px", ["--i" as string]: 1 }}>
+        <div style={{ fontSize: 19, fontWeight: 800, letterSpacing: "-0.01em", lineHeight: 1.2 }}>{event.name}</div>
+        {(event.starts_at || event.venue) && (
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+            {event.starts_at && <span className="sd-date-pill">{dayTime(event.starts_at)}</span>}
+            {event.venue && (
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 700, color: "#6B6B70" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" /></svg>
+                {event.venue}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="sd-anim-settle" style={{ fontSize: 13, fontWeight: 700, color: "#6B6B70", marginTop: 22, paddingLeft: 4, ["--i" as string]: 2 }}>
         {day ? `This ${day}’s topic` : "This week’s topic"}
       </div>
-      <h1 className="sd-title-screen sd-anim-settle" style={{ margin: "6px 0 0", ["--i" as string]: 2 }}>{event.topic}</h1>
+      <h1 className="sd-title-screen sd-anim-settle" style={{ margin: "6px 0 0", ["--i" as string]: 3, overflowWrap: "anywhere" }}>{event.topic}</h1>
       <p className="lma-prose">
         {event.description?.toLowerCase() || "bring your characters, claim a tier, defend it out loud. the room decides where they really belong."}
       </p>
 
-      <Stat className="sd-anim-settle" style={{ marginTop: 24, ["--i" as string]: 3 }} parts={countdownParts(event.starts_at, now)} label="Until showtime" />
+      <Stat className="sd-anim-settle" style={{ marginTop: 24, ["--i" as string]: 4 }} parts={countdownParts(event.starts_at, now)} label="Until showtime" />
 
       {!joined && (
         <WideLink href={routes.join(slug)} className="lma-vt-join" style={{ marginTop: 28 }}>Join now</WideLink>
